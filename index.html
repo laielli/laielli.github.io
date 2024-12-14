@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://latex.now.sh/style.css">
+</head>
+<body>
+
+<!-- <h1></h1> -->
+<p>I am research engineer at Netradyne working on AI for driver safety.  Formerly, I was a PhD candidate at UC Berkeley's BAIR Lab working at the intersection of HCI and ML for label-efficient computer vision.</p>
+
+<h2>links</h2>
+<hr>
+<ul>
+    <li>research</li>
+    <li>projects</li>
+    <li>math club</li>
+    <li>github</li>
+    <li>google scholar</li>
+    <li>twitter</li>
+    <li>cv</li>
+</ul>
+<h2>research</h2>
+<hr>
+<h2>projects</h2>
+<hr>
+<h2>math club</h2>
+<hr>
+
+<p>
+    <div class="theorem">
+        The real numbers $\mathbb{R}$ are uncountable.
+      </div>
+</p>
+
+<button id="dark-mode-toggle">Toggle dark mode</button>
+<script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'],],
+      },
+    }
+    const darkModeToggle = document.querySelector("#dark-mode-toggle")
+    .addEventListener('click', () => {
+     document.body.classList.toggle("latex-dark")
+    })
+  ;
+  </script>
+
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</body>
+</html>
