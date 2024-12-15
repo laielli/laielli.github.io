@@ -15,9 +15,54 @@
 <h2>embedded systems</h2>
 <hr>
 <ul>
-  <li>A collection of resources for studying the basics of embedded systems</li>
-  <li><a href="https://users.ece.utexas.edu/~valvano/Volume1/">Embedded Systems: Shape the World</a></li>
+  <li>a curation from around the web for studying the basics of embedded systems</li>
+  <li><a href="https://users.ece.utexas.edu/~valvano/Volume1/">[EB:StW] Embedded Systems: Shape the World</a></li>
 </ul>
+<h3>intro to embedded systems</h3>
+
+<h4>binary information</h3>
+
+  The bit is the most basic unit of information in computing. The name is a portmanteau
+  of "<b>bi</b>nary digi<b>t</b>". The bit represents a logical state with one of two possible values. These values are most
+  commonly represented as either "1" or "0", but other representations such as true/false, yes/no, on/off,
+  or +/− are also widely used.
+<br>
+  Bits are stored on electric circuits using voltage. The higher voltage is called the '1'
+  and the lower voltage is called the '0'. A circuit maintains voltage through charge separation - just like water
+  pressure exists between different heights, voltage exists where electric charge is separated between points.
+  Components like batteries use chemical reactions to maintain the separation and capacitors store the separated
+  charges on metal plates.
+<br>
+  Figure 1.2.1 shows the output of a typical complementary metal oxide semiconductor (CMOS) circuit. The left side shows the condition with a true bit at the output, and the right side shows a false at the output. The output of each digital circuit consists of a p-type MOS transistor “on top of” an n-type MOS transistor. In digital circuits, each transistor is either on or off. If the transistor is on, it is equivalent to a short circuit between its two output pins. Conversely, if the transistor is off, it is equivalent to an open circuit between its outputs pins.
+<br><br>
+<figure>
+  <img src="img/BinaryBit.png">
+  <figcaption>A binary bit at the output is true if a voltage is present and false if the voltage is 0. src: [EB:StW]</figcaption>
+</figure>
+
+<br>
+Every family of digital logic is different, but on the TM4C microcontrollers from TI powered with 3.3 V supply, a voltage between 2.145 and 5 V is considered high. In general we define VIH as smallest input voltage considered high. A voltage between 0 and 1.155 V is considered low, as drawn in Figure 1.2.2. In general we define VIL as largest input voltage considered high. Separating the two regions by 0.99 V allows digital logic to operate reliably at very high speeds. The design of transistor-level digital circuits is beyond the scope of this book. However, it is important to know that digital data exist as binary bits and encoded as high and low voltages.
+<br><br>
+<figure>
+  <img src="img/DigitalVoltages.png">
+  <figcaption>Mapping between analog voltage and the corresponding digital meaning on the TM4C. src: [EB:StW]</figcaption>
+</figure>
+
+
+<br>
+If the information we wish to store exists in more than two states, we use multiple bits. A collection of 2 bits has 4 possible states (00, 01, 10, and 11). A collection of 3 bits has 8 possible states (000, 001, 010, 011, 100, 101, 110, and 111). In general, a collection of n bits has 2n states. For example, a byte contains eight bits and is built by grouping eight binary bits into one object, as shown in Figure 1.2.3. Another name for a collection of eight bits is octet (octo is Latin and Greek meaning 8.) Information can take many forms, e.g., numbers, logical states, text, instructions, sounds, or images. What the bits mean depends on how the information is organized and more importantly how it is used. This figure shows one byte in the state representing the binary number 01100111, which could mean 103. As a character, this same collection of bits represents the letter ‘g’. Again, the output voltage 3.3V means true or 1, and the output voltage of 0V means false or 0.
+<br><br>
+<figure>
+  <img src="img/Byte.png">
+  <figcaption>A byte is comprised of 8 bits, in this case representing the binary number 01100111. src: [EB:StW]</figcaption>
+
+</figure>
+<br>
+
+<h4>numbers</h3>
+
+  A great deal of confusion exists over the abbreviations we use for large numbers. In 1998 the International Electrotechnical Commission (IEC) defined a new set of abbreviations for the powers of 2, as shown in Table 1.3.1. These new terms are endorsed by the Institute of Electrical and Electronics Engineers (IEEE) and International Committee for Weights and Measures (CIPM) in situations where the use of a binary prefix is appropriate. The confusion arises over the fact that the mainstream computer industry, such as Microsoft, Apple, and Dell, continues to use the old terminology. According to the companies that market to consumers, a 1 GHz is 1,000,000,000 Hz but 1 Gbyte of memory is 1,073,741,824 bytes. The correct terminology is to use the SI-decimal abbreviations to represent powers of 10, and the IEC-binary abbreviations to represent powers of 2. The scientific meaning of 2 kilovolts is 2000 volts, but 2 kibibytes is the proper way to specify 2048 bytes. The term kibibyte is a contraction of kilo binary byte and is a unit of information or computer storage, abbreviated KiB.
+
 <hr>
 <br>
 <button id="dark-mode-toggle">Toggle dark mode</button>
