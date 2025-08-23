@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://latex.now.sh/style.css">
+  <style>
+    .flashcard-container {
+      max-width: 800px;
+      margin: 2rem auto;
+      text-align: center;
+    }
+    
+    .flashcard {
+      border: 2px solid #333;
+      border-radius: 8px;
+      padding: 2rem;
+      margin: 2rem 0;
+      min-height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: #f9f9f9;
+    }
+    
+    .flashcard:hover {
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transform: translateY(-2px);
+    }
+    
+    .flashcard.revealed {
+      background: #e8f4fd;
+      border-color: #007acc;
+    }
+    
+    .flashcard-content {
+      font-size: 1.2rem;
+      line-height: 1.5;
+    }
+    
+    .question {
+      font-weight: bold;
+      color: #333;
+    }
+    
+    .answer {
+      color: #007acc;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #ddd;
+    }
+    
+    .controls {
+      margin: 2rem 0;
+    }
+    
+    .btn {
+      background: #007acc;
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      margin: 0 0.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.3s ease;
+    }
+    
+    .btn:hover {
+      background: #005fa3;
+    }
+    
+    .stats {
+      margin: 1rem 0;
+      font-size: 0.9rem;
+      color: #666;
+    }
+    
+    .loading {
+      text-align: center;
+      color: #666;
+      font-style: italic;
+    }
+    
+    /* Dark mode styles */
+    .latex-dark .flashcard {
+      background: #2a2a2a;
+      border-color: #666;
+      color: #e0e0e0;
+    }
+    
+    .latex-dark .flashcard.revealed {
+      background: #1a3a4a;
+      border-color: #4a9eff;
+    }
+    
+    .latex-dark .question {
+      color: #e0e0e0;
+    }
+    
+    .latex-dark .answer {
+      color: #4a9eff;
+      border-top-color: #555;
+    }
+  </style>
+</head>
+<body>
+
+<h1><a href="https://laielli.github.io/">michael laielli</a></h1>
+
+<h2>machine learning flashcards</h2>
+<hr>
+
+<div class="flashcard-container">
+  <div id="loading" class="loading">Loading flashcards...</div>
+  
+  <div id="flashcard-area" style="display: none;">
+    <div class="stats">
+      <span id="card-count">Card 1 of 0</span>
+    </div>
+    
+    <div id="flashcard" class="flashcard">
+      <div class="flashcard-content">
+        <div class="question" id="question">Click to load a question</div>
+        <div class="answer" id="answer" style="display: none;">Answer will appear here</div>
+      </div>
+    </div>
+    
+    <div class="controls">
+      <button class="btn" id="new-card-btn">New Card</button>
+      <button class="btn" id="reveal-btn" style="display: none;">Reveal Answer</button>
+      <button class="btn" id="next-btn" style="display: none;">Next Card</button>
+    </div>
+    
+    <div class="stats">
+      Total cards: <span id="total-cards">0</span>
+    </div>
+  </div>
+</div>
+
+<hr>
+<p><a href="index.html">← Back to Machine Learning</a></p>
+
+<button id="dark-mode-toggle">Toggle dark mode</button>
+
+<script>
+class FlashcardApp {
+  constructor() {
+    this.flashcards = [];
+    this.currentCard = null;
+    this.currentIndex = 0;
+    this.isRevealed = false;
+    this.usedCards = new Set();
+    
+    this.initializeElements();
+    this.loadFlashcards();
+    this.setupEventListeners();
+  }
+  
+  initializeElements() {
+    this.loadingEl = document.getElementById('loading');
+    this.flashcardArea = document.getElementById('flashcard-area');
+    this.flashcardEl = document.getElementById('flashcard');
+    this.questionEl = document.getElementById('question');
+    this.answerEl = document.getElementById('answer');
+    this.newCardBtn = document.getElementById('new-card-btn');
+    this.revealBtn = document.getElementById('reveal-btn');
+    this.nextBtn = document.getElementById('next-btn');
+    this.cardCountEl = document.getElementById('card-count');
+    this.totalCardsEl = document.getElementById('total-cards');
+  }
+  
+  async loadFlashcards() {
+    try {
+      const response = await fetch('flashcards.csv');
+      const csvText = await response.text();
+      this.flashcards = this.parseCSV(csvText);
+      this.totalCardsEl.textContent = this.flashcards.length;
+      this.loadingEl.style.display = 'none';
+      this.flashcardArea.style.display = 'block';
+      this.loadRandomCard();
+    } catch (error) {
+      console.error('Error loading flashcards:', error);
+      this.loadingEl.textContent = 'Error loading flashcards. Please check if flashcards.csv exists.';
+    }
+  }
+  
+  parseCSV(csvText) {
+    const lines = csvText.trim().split('\n');
+    const headers = lines[0].split(',');
+    const flashcards = [];
+    
+    for (let i = 1; i < lines.length; i++) {
+      const values = this.parseCSVLine(lines[i]);
+      if (values.length >= 2) {
+        flashcards.push({
+          question: values[0].trim(),
+          answer: values[1].trim()
+        });
+      }
+    }
+    
+    return flashcards;
+  }
+  
+  parseCSVLine(line) {
+    const result = [];
+    let current = '';
+    let inQuotes = false;
+    
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i];
+      
+      if (char === '"') {
+        inQuotes = !inQuotes;
+      } else if (char === ',' && !inQuotes) {
+        result.push(current);
+        current = '';
+      } else {
+        current += char;
+      }
+    }
+    
+    result.push(current);
+    return result;
+  }
+  
+  loadRandomCard() {
+    if (this.flashcards.length === 0) return;
+    
+    // Reset if all cards have been used
+    if (this.usedCards.size >= this.flashcards.length) {
+      this.usedCards.clear();
+    }
+    
+    let randomIndex;
+    do {
+      randomIndex = Math.floor(Math.random() * this.flashcards.length);
+    } while (this.usedCards.has(randomIndex) && this.usedCards.size < this.flashcards.length);
+    
+    this.usedCards.add(randomIndex);
+    this.currentCard = this.flashcards[randomIndex];
+    this.currentIndex = randomIndex;
+    this.displayCard();
+  }
+  
+  displayCard() {
+    if (!this.currentCard) return;
+    
+    this.questionEl.textContent = this.currentCard.question;
+    this.answerEl.textContent = this.currentCard.answer;
+    this.answerEl.style.display = 'none';
+    this.flashcardEl.classList.remove('revealed');
+    this.isRevealed = false;
+    
+    this.updateCardCount();
+    this.updateButtons();
+  }
+  
+  revealAnswer() {
+    this.answerEl.style.display = 'block';
+    this.flashcardEl.classList.add('revealed');
+    this.isRevealed = true;
+    this.updateButtons();
+  }
+  
+  updateCardCount() {
+    this.cardCountEl.textContent = `Card ${this.usedCards.size} of ${this.flashcards.length}`;
+  }
+  
+  updateButtons() {
+    if (this.isRevealed) {
+      this.revealBtn.style.display = 'none';
+      this.nextBtn.style.display = 'inline-block';
+    } else {
+      this.revealBtn.style.display = 'inline-block';
+      this.nextBtn.style.display = 'none';
+    }
+  }
+  
+  setupEventListeners() {
+    this.newCardBtn.addEventListener('click', () => {
+      this.loadRandomCard();
+    });
+    
+    this.revealBtn.addEventListener('click', () => {
+      this.revealAnswer();
+    });
+    
+    this.nextBtn.addEventListener('click', () => {
+      this.loadRandomCard();
+    });
+    
+    this.flashcardEl.addEventListener('click', () => {
+      if (!this.isRevealed) {
+        this.revealAnswer();
+      }
+    });
+    
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault();
+        if (!this.isRevealed) {
+          this.revealAnswer();
+        } else {
+          this.loadRandomCard();
+        }
+      } else if (e.key === 'n' || e.key === 'N') {
+        this.loadRandomCard();
+      }
+    });
+  }
+}
+
+// Dark mode functionality
+const darkModeToggle = document.querySelector("#dark-mode-toggle");
+darkModeToggle.addEventListener('click', () => {
+  document.body.classList.toggle("latex-dark");
+});
+
+// Initialize the app when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+  new FlashcardApp();
+});
+
+// MathJax configuration
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$']],
+  },
+};
+</script>
+
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</body>
+</html>

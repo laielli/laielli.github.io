@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://latex.now.sh/style.css">
+</head>
+<body>
+
+<!-- <h1>Michael Laielli</h1> -->
+<h1><a href="https://laielli.github.io/">michael laielli</a></h1>
+
+<h2>math</h2>
+<hr>
+
+<!-- Add your content here -->
+
+<hr>
+<br>
+<button id="dark-mode-toggle">Toggle dark mode</button>
+<script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'],],
+      },
+    }
+    const darkModeToggle = document.querySelector("#dark-mode-toggle")
+    .addEventListener('click', () => {
+     document.body.classList.toggle("latex-dark")
+    })
+  ;
+  </script>
+
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mtml-chtml.js"></script>
+</body>
+</html>
