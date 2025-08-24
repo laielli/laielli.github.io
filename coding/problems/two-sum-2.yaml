@@ -1,0 +1,27 @@
+name: "Two Sum II - Input Array Is Sorted"
+patterns: ["two-pointer"]
+difficulty: "easy"
+url: "https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/"
+problem: |
+  Given a 1-indexed array of integers numbers that is sorted in non-decreasing order, find two numbers such that they add up to a specific target number.
+  Let these two numbers be numbers[index1] and numbers[index2] where 1 <= index1 < index2 <= numbers.length.
+  Return the indices of the two numbers (index1 and index2), added by one, as an integer array [index1, index2] of length 2.
+  The tests are generated such that there is exactly one solution. You may not use the same element twice. Your solution must use only constant extra space.
+flashcards:
+  - question: "What is the time complexity of the two-pointer solution for this problem?"
+    answer: "O(n)"
+  - question: "What is the time complexity of using a binary search approach for this problem?"
+    answer: "O(n log n)"
+  - question: "Why is a two-pointer approach preferred for this problem?"
+    answer: "Because the input array is sorted, using two pointers allows us to find the two numbers in a single pass with O(1) space. It's more efficient than using a hash table (which uses extra space) or brute force."
+  - question: "What is/are the pattern(s) of the solution?"
+    answer: "Two-pointer"
+  - question: "How are the indices in the output formatted for this problem?"
+    answer: "The problem uses 1-indexed positions, so the returned indices are one-based (i.e., 1 is added to the zero-based indices)."
+  - question: "List the steps of the two-pointer approach."
+    answer: |
+      1. Initialize two pointers: left at the start of the array and right at the end.
+      2. Compute the sum of numbers[left] + numbers[right].
+      3. If the sum equals the target, return [left+1, right+1] (convert to 1-indexed).
+      4. If the sum is less than the target, increment left to increase the sum.
+      5. If the sum is greater than the target, decrement right to decrease the sum.

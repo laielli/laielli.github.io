@@ -1,0 +1,25 @@
+name: "greedy-algorithms"
+flashcards:
+  - question: Give a brief description of the greedy algorithm approach.
+    answer: "A greedy algorithm is an approach that builds up a solution by always choosing the option that seems best at the current moment. In other words, at each step, it makes the locally optimal choice, with the hope that these local optima will lead to a globally optimal solution. This strategy does not reconsider choices once made (no backtracking), which makes greedy algorithms straightforward and often very efficient for problems that can be solved by a series of local decisions."
+  - question: What is the primary benefit of using a greedy algorithm?
+    answer: "Simplicity and efficiency: Greedy algorithms are typically easy to conceptualize and implement since they make decisions based on immediate benefit without complex state or recursion. They often run efficiently (frequently in linear or linearithmic time) because they only perform a single pass (or a few passes) through the data, making a choice and never looking back. When applicable, a greedy solution can be much simpler and faster than dynamic programming or backtracking alternatives."
+  - question: What is the typical time complexity of greedy algorithms?
+    answer: "O(n) or O(n log n): Many greedy algorithms achieve good time complexity. In the simplest cases, a greedy algorithm can run in O(n) time (for example, if the input is already sorted by the needed criterion or if sorting isn’t necessary). Often, an initial sort or priority queue is used to facilitate greedy choices, which adds a factor of O(n log n) for the sorting or heap operations. Overall, greedy strategies tend to be polynomial-time (usually linear or linearithmic), making them efficient for large inputs."
+  - question: What is the typical space complexity of greedy algorithms?
+    answer: "O(1): Greedy algorithms usually require little extra memory beyond the input and output. They make decisions on the fly and typically use constant auxiliary space (just a few variables to keep track of the current solution or counts). If a data structure like a heap or an array is used to sort or select the next candidate, space might be O(n) for that structure, but there’s generally no large additional memory usage like the DP tables in dynamic programming."
+  - question: When is the greedy approach most effective?
+    answer: "Greedy-choice property: The greedy approach is most effective when the problem exhibits the greedy-choice property and optimal substructure. This means that a locally optimal choice can lead to a globally optimal solution, and once a choice is made, it doesn’t prevent reaching the optimal overall outcome. When each step’s greedy decision leaves a subproblem that can be solved greedily as well, the approach works perfectly. Classic examples of such scenarios include selecting activities by earliest finish time (interval scheduling) or building an optimal code with Huffman coding. In these problems, making the best local choice at each step produces an optimal global solution."
+  - question: What is a typical use case for greedy algorithms?
+    answer: "Scheduling and optimization problems: A typical use case is the **activity selection problem** (interval scheduling), where the greedy strategy of always picking the next activity that finishes first yields the maximum number of non-overlapping activities. Other common examples include:
+    1. **Fractional Knapsack**: taking items with the highest value-per-weight first to maximize value.
+    2. **Huffman Coding**: greedily merging the two smallest frequency nodes to build an optimal prefix code.
+    3. **Minimum Spanning Tree**: algorithms like Kruskal’s and Prim’s use greedy choices (smallest weight edge first) to find the optimal spanning tree.
+    4. **Dijkstra’s Algorithm**: for shortest paths in a graph with non-negative edge weights, it greedily picks the nearest unvisited node next.
+    These scenarios use a greedy approach at each step to efficiently find an optimal solution."
+  - question: What is the typical implementation of a greedy algorithm?
+    answer: "Greedy algorithms are usually implemented by first defining a heuristic or rule to rank choices (for example, sort items by value-to-weight ratio, or sort intervals by end time). Implementation often involves:
+    1. Sorting the input (or using a priority queue) so that the most favorable option is easily accessible.
+    2. Iterating through the sorted data or repeatedly extracting from a priority queue, and at each step taking the action that seems best according to the greedy criterion.
+    3. Making the choice and updating any relevant state (like remaining capacity in knapsack, or marking an interval as taken, etc.), then moving on to the next choice.
+    By the end of this process, the algorithm has built a solution by never reconsidering prior choices, relying on the problem’s structure to ensure optimality if the greedy-choice property holds."

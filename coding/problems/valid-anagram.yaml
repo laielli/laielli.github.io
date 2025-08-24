@@ -1,0 +1,26 @@
+name: "Valid Anagram"
+patterns: ["hash-table"]
+difficulty: "easy"
+url: "https://leetcode.com/problems/valid-anagram/"
+problem: |
+  Given two strings s and t, return true if t is an anagram of s, and false otherwise.
+  An anagram is a word or phrase formed by rearranging the letters of a different word or phrase, typically using all the original letters exactly once.
+flashcards:
+  - question: "What is the time complexity of sorting both strings to check for an anagram?"
+    answer: "O(n log n)"
+  - question: "What is the time complexity of using a hash table (frequency count) to check for an anagram?"
+    answer: "O(n)"
+  - question: "What is the space complexity of the hash table method?"
+    answer: "O(n)"
+  - question: "What is/are the pattern(s) of the solution?"
+    answer: "Hash table"
+  - question: "Briefly explain how to determine if two strings are anagrams."
+    answer: "One approach is to sort both strings and compare them for equality. A more efficient approach is to count the occurrences of each character in one string and ensure the counts match in the other string."
+  - question: "List the steps to solve the problem using the hash table approach."
+    answer: |
+      1. If the two strings have different lengths, return false.
+      2. Initialize a hash table (or array) to count characters in the first string.
+      3. Increment the count for each character in the first string.
+      4. Decrement the count for each character in the second string.
+      5. Check all counts: if any character count is not zero, return false.
+      6. If all counts are zero, return true.

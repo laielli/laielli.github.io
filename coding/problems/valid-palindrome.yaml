@@ -1,0 +1,26 @@
+name: "Valid Palindrome"
+patterns: ["two-pointer"]
+difficulty: "easy"
+url: "https://leetcode.com/problems/valid-palindrome/"
+problem: |
+  Given a string s, determine if it is a palindrome, considering only alphanumeric characters and ignoring cases.
+  For the purpose of this problem, we define an empty string as a valid palindrome.
+flashcards:
+  - question: "What is the time complexity of the two-pointer approach to check if a string is a palindrome?"
+    answer: "O(n)"
+  - question: "What is the space complexity of the two-pointer approach versus the filter-and-reverse approach?"
+    answer: "Two-pointer: O(1), Filter-and-reverse: O(n)"
+  - question: "What characters are ignored when checking for palindrome in this problem?"
+    answer: "All non-alphanumeric characters (everything except letters and digits) are ignored."
+  - question: "What is/are the pattern(s) of the solution?"
+    answer: "Two-pointer"
+  - question: "Briefly explain how the two-pointer technique works for this problem."
+    answer: "Use two pointers at the start and end of the string, move them inward while skipping any characters that are not alphanumeric. Compare the characters at both pointers (in the same case). If all mirrored characters match, the string is a palindrome."
+  - question: "List the steps to determine if a string is a palindrome."
+    answer: |
+      1. Initialize two pointers: left at the beginning and right at the end of the string.
+      2. While left < right:
+      3.   Move left forward if s[left] is not alphanumeric; similarly, move right backward if s[right] is not alphanumeric.
+      4.   Compare the characters at s[left] and s[right] (after converting both to the same case). If they differ, return false.
+      5.   Move left one step to the right and right one step to the left.
+      6. If the loop completes without a mismatch, return true.

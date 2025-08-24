@@ -1,0 +1,27 @@
+name: "Maximum Subarray"
+patterns: ["dynamic-programming", "greedy"]
+difficulty: "easy"
+url: "https://leetcode.com/problems/maximum-subarray/"
+problem: |
+  Given an integer array nums, find the contiguous subarray (containing at least one number) which has the largest sum, and return its sum.
+  A subarray is a contiguous part of an array.
+flashcards:
+  - question: "What is the time complexity of the brute-force solution for finding the maximum subarray sum?"
+    answer: "O(n^2)"
+  - question: "What is the time complexity of Kadane's algorithm for this problem?"
+    answer: "O(n)"
+  - question: "What does Kadane's algorithm do in the context of this problem?"
+    answer: "It iterates through the array and at each element, it computes the maximum subarray sum ending at that element (either extending the previous subarray or starting fresh at the current element). It keeps track of a global maximum subarray sum found so far."
+  - question: "What is/are the pattern(s) of the solution?"
+    answer: "Dynamic-programming + greedy."
+  - question: "What is the space complexity of the optimal solution (Kadane's algorithm)?"
+    answer: "O(1)"
+  - question: "Briefly explain how to implement Kadane's algorithm."
+    answer: "Initialize two variables, current_max and global_max, with the first element of the array. Then iterate through the array from the second element onward: for each element x, update current_max = max(x, current_max + x) and update global_max = max(global_max, current_max). In the end, global_max will hold the largest sum."
+  - question: "List the steps of Kadane's algorithm."
+    answer: |
+      1. Initialize current_max and max_so_far to the first element of the array.
+      2. For each subsequent element num in the array (from index 1 to end):
+      3.   Set current_max = max(num, current_max + num).
+      4.   Set max_so_far = max(max_so_far, current_max).
+      5. Return max_so_far (this is the largest sum of any contiguous subarray).

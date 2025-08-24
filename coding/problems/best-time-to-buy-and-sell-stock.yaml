@@ -1,0 +1,27 @@
+name: "Best Time to Buy and Sell Stock"
+patterns: ["greedy"]
+difficulty: "easy"
+url: "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/"
+problem: |
+  You are given an array prices where prices[i] is the price of a given stock on the i-th day.
+  You want to maximize your profit by choosing a single day to buy one stock and a different day in the future to sell that stock.
+  Return the maximum profit you can achieve. If you cannot achieve any profit, return 0.
+flashcards:
+  - question: "What is the time complexity of the brute-force approach to find the maximum profit?"
+    answer: "O(n^2)"
+  - question: "What is the time complexity of the optimal one-pass solution?"
+    answer: "O(n)"
+  - question: "What is the key insight for the one-pass (greedy) solution?"
+    answer: "Track the minimum price seen so far as you iterate through the days, and calculate the profit if selling on the current day. Update the maximum profit whenever the current profit is greater than the recorded maximum."
+  - question: "What is/are the pattern(s) of the solution?"
+    answer: "Greedy"
+  - question: "Why does the greedy approach work for this problem?"
+    answer: "Because at any day, the best choice is to have bought at the lowest price seen before that day. This local optimum strategy (always buy at the lowest seen price and consider selling today) leads to the global optimum for maximum profit."
+  - question: "List the steps for the optimal solution."
+    answer: |
+      1. Initialize min_price to a very large number and max_profit to 0.
+      2. Loop through each price in the array:
+      3.   If the current price is lower than min_price, update min_price.
+      4.   Otherwise, calculate the profit if selling at the current price (current price - min_price).
+      5.   If that profit is greater than max_profit, update max_profit.
+      6. Return max_profit (if no profit was found, this will be 0).

@@ -1,0 +1,16 @@
+name: "sliding-window"
+flashcards:
+  - question: Give a brief description of the sliding window pattern.
+    answer: "The sliding window pattern is an algorithmic technique for efficiently processing a subset of data that moves through a collection. It involves maintaining a window (contiguous subsequence) over the data and sliding it by one position at a time, updating computations incrementally instead of recomputing from scratch. This approach is commonly used on arrays or strings to find subarrays/substrings meeting certain criteria, greatly improving efficiency (often achieving linear time)."
+  - question: What is the primary benefit of using the sliding window pattern?
+    answer: "Efficiency: The primary benefit is that it reduces time complexity by reusing results from the previous window. Instead of nested loops, a sliding window handles elements incrementally, avoiding redundant calculations and often transforming an O(n²) problem into O(n)."
+  - question: What is the typical time complexity of the sliding window pattern?
+    answer: "O(n): Sliding window algorithms usually run in linear time. By moving the window boundaries step by step and updating values in constant time per step, the entire data structure is processed with a single pass (or a constant number of passes)."
+  - question: What is the typical space complexity of the sliding window pattern?
+    answer: "O(1): The sliding window pattern typically requires only constant extra space. It uses a few pointers or counters to track the window’s state, making it memory-efficient (excluding the input data and output results)."
+  - question: When is the sliding window pattern most effective?
+    answer: "Contiguous data: It is particularly effective for problems involving contiguous sequences (subarrays or substrings). If a problem asks for a calculation on every window or segment of an array/string (like a sum, average, or checking a condition), sliding window excels by avoiding reprocessing the entire window from scratch on each move."
+  - question: What is a typical use case for the sliding window pattern?
+    answer: "Subarray/substring problems: A common use case is finding subarrays or substrings that meet certain criteria. For example, finding the maximum sum of any subarray of length k, finding the smallest subarray with a sum above a threshold, or finding the longest substring with unique characters. The sliding window allows these tasks to be done efficiently by maintaining the current window’s state as it moves."
+  - question: What is the typical implementation of the sliding window pattern?
+    answer: "The sliding window is typically implemented with two indices (or pointers) that define the current window’s start and end. Initially, the window covers the beginning of the data. Then, you incrementally move one pointer to expand the window or the other to shrink it as needed. At each step, you update any necessary running calculations (like adding the new element and removing the old one from a sum or count). This two-pointer technique allows the window to “slide” through the data structure while keeping track of the window’s contents in constant time."

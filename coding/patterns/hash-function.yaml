@@ -1,0 +1,40 @@
+name: "hash-function"
+flashcards:
+  - question: What is a hash function?
+    answer: "A hash function takes input data of arbitrary size and produces a fixed-size output, typically called a hash code, digest, or hash value."
+  - question: What are some properties of a good hash function?
+    answer: "Properties of a Good Hash Function:
+    1.	Deterministic: The same input always results in the same output.
+    2.	Fast: It should compute the hash quickly.
+    3.	Uniform: Hashes should be evenly distributed across the output space to minimize collisions.
+    4.	Collision-resistant: Two different inputs should not produce the same output (or should be very unlikely to).
+    5.	Irreversible (in cryptographic contexts): It should be computationally infeasible to reconstruct the input from its hash."
+  - question: What are some uses of a hash function?
+    answer: "Uses of a Hash Function:
+    1.	Data storage: Hash tables, hash maps, hash sets.
+    2.	Error correction: Checksums, hash-based message authentication codes (HMACs).
+    3.	Password storage: Salted hashes for password security.
+    4.	Data integrity: Digital signatures, hash-based file systems.
+    5.	Random number generation: Hash-based random number generators.
+    6. Load Balancing: Map users/requests to servers using consistent hashing."
+    - question: How does it work in a hash table?
+    answer: "A hash function is used to compute the index for storing/retrieving key-value pairs efficiently.
+    1. You want to store a value for a key like username
+    2. Apply a hash function to username, e.g., hash(username) = 42
+    3. Use that value (modulo table size) as an index into an array."
+  - question: What's a collision?
+    answer: "A collision occurs when two different inputs produce the same output."
+  - question: What are some ways to handle collisions?
+    answer: "Ways to Handle Collisions:
+    1.	Open Addressing: Store the value at the next available slot.
+    2.	Chaining: Store values in a linked list at the same index.
+    3.	Double Hashing: Use a second hash function to find the next slot.
+    4.	Resizing: Increase the size of the table when collisions become too frequent."
+  - question: What are the high-level ideas behind SHA-256?
+    answer: "SHA-256 transforms any-size input into a 256-bit fixed-length hash using the following steps:
+    1.	Preprocessing: Pad the message to make its length a multiple of 512 bits.
+    2.	Initialize hash values: Set up eight 32-bit constants.
+    3.	Process message in 512-bit chunks:
+      •	Break each chunk into 32-bit words
+      •	Run 64 rounds of bitwise operations on them using predefined constants and functions
+    4.	Produce the final digest by combining the results of all chunks."

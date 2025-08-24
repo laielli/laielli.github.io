@@ -1,0 +1,23 @@
+name: "backtracking"
+flashcards:
+  - question: Give a brief description of the backtracking pattern.
+    answer: "Backtracking is an algorithmic technique for solving problems by trying to build a solution incrementally and abandoning (backtracking) as soon as it determines that the current partial solution cannot lead to a valid full solution. It systematically explores the search space of possible solution candidates in a depth-first manner: make a choice, recursively proceed with that choice, and if it fails (hits a dead end or violates a constraint), revert the choice and try a different path. This approach ensures that all potential solutions are eventually explored, while pruning away large portions of the search space that are proven to be invalid early on."
+  - question: What is the primary benefit of using the backtracking approach?
+    answer: "Pruning: The primary benefit of backtracking is its ability to prune the search space. Unlike naive brute-force that blindly explores all possibilities, backtracking eliminates paths that cannot possibly lead to a solution as soon as they are identified. This focused search can significantly reduce the number of possibilities that need to be explored in practice, making it more efficient than an unoptimized brute force search when constraints are tight."
+  - question: What is the typical time complexity of a backtracking solution?
+    answer: "Exponential: Backtracking algorithms often run in exponential time in the worst case (for example, O(2^n) or O(n!) depending on the problem). This is because they may potentially explore every possible combination of choices. The exact complexity varies by problem, but generally backtracking does not scale polynomially. However, effective pruning can make the algorithm faster on average than the raw worst-case suggests."
+  - question: What is the typical space complexity of a backtracking solution?
+    answer: "O(n): Backtracking typically uses space proportional to the depth of the search tree (which is often linear in the size of the input or the solution length). The primary extra space comes from the recursion stack and any auxiliary structures to track the current solution (for example, an array to hold a combination being built). Aside from storing solutions, memory usage is usually linear in the problem size, not counting the exponential number of possibilities which are explored one path at a time."
+  - question: When is the backtracking approach most effective?
+    answer: "Combinatorial problems: Backtracking is most effective for problems that involve searching through a large space of combinations or configurations under certain constraints. It shines in situations like puzzles or constraint satisfaction problems (e.g. Sudoku, crosswords, N-Queens), where partial solutions can be checked against constraints and eliminated early. When a problem requires exploring options and has pruning opportunities (eliminating invalid partial solutions), backtracking is a natural fit."
+  - question: What is a typical use case for the backtracking pattern?
+    answer: "Puzzle solving and generation of combinations: A typical use case is solving puzzles and generating all possible solutions that meet criteria. Examples include:
+    1. Solving puzzles like Sudoku or the N-Queens problem by placing elements and backtracking when a placement is invalid.
+    2. Generating combinations or permutations (like all subsets of a set, all permutations of a sequence, or all valid IP addresses from a string of digits).
+    3. Solving constraint satisfaction problems where you build a solution step-by-step (like filling in a crossword or assigning colors in a graph coloring problem)."
+  - question: What is the typical implementation of the backtracking approach?
+    answer: "Backtracking is typically implemented using recursion to explore the decision tree of choices. The implementation will:
+    1. Choose: Make a choice or add an element to the current partial solution.
+    2. Explore: Recursively attempt to build a complete solution with that choice.
+    3. Unchoose (Backtrack): If the current path fails a constraint or doesn't lead to a solution, undo the last choice (remove the element or revert the state) and try a different option.
+    This recursive depth-first search structure, with the ability to backtrack, allows the algorithm to try all possibilities in a structured way and prune those that fail along the way."

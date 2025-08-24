@@ -1,0 +1,10 @@
+name: "hash-table"
+flashcards:
+  - question: What is a hash table?
+    answer: "Hash Table is a data structure which organizes data using hash functions in order to support quick insertion and search."
+  - question: What is the primary benefit(s) of a hash table?
+    answer: "The primary benefit of a hash table is extremely fast lookups, inserts, and deletions—on average O(1) time complexity. In short: the key advantage is constant-time access on average."
+  - question: What makes a hash table particularly useful?
+    answer: "A hash function maps keys directly to an index (a “bucket”) in memory, the data structure doesn’t need to scan through all elements (like in an array or linked list) or traverse levels (like in a tree). 
+  - question: In what scenarios is a hash table particularly useful?
+    answer: "Quick key-value retrieval (like dictionaries, caches, or symbol tables). Efficient updates (adding, removing, or changing entries without expensive searching)."

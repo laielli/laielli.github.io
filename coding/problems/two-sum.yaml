@@ -1,0 +1,33 @@
+name: "Two Sum"
+patterns: ["two-pointer", "hash-table"]
+difficulty: "easy"
+url: "https://leetcode.com/problems/two-sum/"
+problem: |
+  Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
+  You may assume that each input would have exactly one solution, and you may not use the same element twice.
+  You can return the answer in any order.
+flashcards:
+  - question: "What is the time complexity if using brute force?"
+    answer: "O(n^2)"
+  - question: "What is the space complexity if using brute force?"
+    answer: "O(1)"  
+  - question: "What is the time complexity if using a hash table?"
+    answer: "O(n)"
+  - question: "What is the space complexity if using a hash table?"
+    answer: "O(n)"
+  - question: "What is the best algorithm to solve the two-sum problem?"
+    answer: "Hash table"
+  - question: "What is the worst algorithm to solve the two-sum problem?"
+    answer: "Brute force"
+  - question: "What is/are the pattern(s) of the solution?"
+    answer: "Two-pointer + hash table."
+  - question: "Briefly explain the insight to the solution. "
+    answer: "Instead of checking every pair of numbers (which would be O(n²)), we can use a hash table to store numbers we've seen and their indices. For each number, we check if its complement (target - current number) exists in our hash table."
+  - question: "List the steps to solve the problem."
+    answer: |
+      1. Initialize a hash table to store the numbers and their indices.
+      2. Iterate through the array.
+      3. For each number, check if the complement (target - number) exists in the hash table.
+      4. If it does, return the indices of the two numbers.
+      5. If it does not, add the number and its index to the hash table.
+      6. If no solution is found, return an empty array.

@@ -1,0 +1,27 @@
+name: "Contains Duplicate"
+patterns: ["hash-table"]
+difficulty: "easy"
+url: "https://leetcode.com/problems/contains-duplicate/"
+problem: |
+  Given an integer array nums, return true if any value appears at least twice in the array,
+  and return false if every element is distinct.
+flashcards:
+  - question: "What is the brute-force time complexity for checking duplicates?"
+    answer: "O(n^2)"
+  - question: "What is the time complexity of checking duplicates using a hash set?"
+    answer: "O(n)"
+  - question: "What is the time complexity of sorting the array to check for duplicates?"
+    answer: "O(n log n)"
+  - question: "What is the space complexity of using a hash set to detect duplicates?"
+    answer: "O(n)"
+  - question: "What is/are the pattern(s) of the solution?"
+    answer: "Hash table"
+  - question: "Briefly explain how to check for duplicates efficiently."
+    answer: "Use a hash set to keep track of seen numbers. As you iterate through the array, if you encounter a number that's already in the set, you have found a duplicate and can return true. If you finish the loop without finding any duplicate, return false."
+  - question: "List the steps to solve the problem using a hash set."
+    answer: |
+      1. Initialize an empty hash set.
+      2. For each number in the array:
+      3.   If the number is already in the set, return true (duplicate found).
+      4.   Otherwise, add the number to the set.
+      5. If the loop completes without finding a duplicate, return false.
