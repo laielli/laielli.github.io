@@ -1,0 +1,29 @@
+name: "First Bad Version"
+patterns: ["binary-search"]
+difficulty: "easy"
+url: "https://leetcode.com/problems/first-bad-version/"
+problem: |
+  You are a product manager and currently leading a team to develop a new product. Unfortunately, the latest version of your product fails the quality check.
+  Since each version is built upon the previous versions, all versions after a bad version are also bad.
+  Suppose you have n versions [1, 2, ..., n] and you want to find out the first bad one, which causes all the following ones to be bad.
+  You are given an API bool isBadVersion(version) which returns whether version is bad. Implement a function to find the first bad version.
+  Minimize the number of calls to the API.
+flashcards:
+  - question: "What is the naive time complexity of finding the bad version by checking each version sequentially?"
+    answer: "O(n)"
+  - question: "What is the time complexity of the binary search solution to find the first bad version?"
+    answer: "O(log n)"
+  - question: "Why do we use binary search for this problem?"
+    answer: "Because it allows us to eliminate half of the versions in each step, significantly reducing the number of API calls compared to a linear search."
+  - question: "What is/are the pattern(s) of the solution?"
+    answer: "Binary-search"
+  - question: "How do you determine if a version is the first bad version during binary search?"
+    answer: "During binary search, when you find a bad version, you check if it is the first bad by seeing if the previous version is good. If the previous version is good (or it’s the first version), then the current bad version is the first bad version."
+  - question: "List the steps of the binary search approach for this problem."
+    answer: |
+      1. Initialize two pointers, low = 1 and high = n (the total number of versions).
+      2. While low < high:
+      3.   Let mid = low + (high - low) // 2.
+      4.   If isBadVersion(mid) is true, set high = mid (we found a bad version, continue to search left).
+      5.   Otherwise (isBadVersion(mid) is false), set low = mid + 1 (search in the right half).
+      6. After the loop, low will point to the first bad version. Return low.

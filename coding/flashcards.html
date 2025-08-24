@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://latex.now.sh/style.css">
+  <style>
+    .flashcard-container {
+      max-width: 800px;
+      margin: 2rem auto;
+      text-align: center;
+    }
+    
+    .flashcard {
+      border: 2px solid #333;
+      border-radius: 8px;
+      padding: 2rem;
+      margin: 2rem 0;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: #f9f9f9;
+    }
+    
+    .flashcard:hover {
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transform: translateY(-2px);
+    }
+    
+    .flashcard.revealed {
+      background: #e8f4fd;
+      border-color: #007acc;
+    }
+    
+    .flashcard-content {
+      font-size: 1.2rem;
+      line-height: 1.5;
+      width: 100%;
+    }
+    
+    .problem-statement {
+      background: #fff3cd;
+      border: 1px solid #ffeaa7;
+      border-radius: 4px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      font-size: 1rem;
+      color: #856404;
+      white-space: pre-wrap;
+    }
+    
+    .question {
+      font-weight: bold;
+      color: #333;
+    }
+    
+    .answer {
+      color: #007acc;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #ddd;
+      white-space: pre-wrap;
+    }
+    
+    .card-type {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      background: #007acc;
+      color: white;
+      padding: 0.3rem 0.6rem;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+    
+    .card-type.pattern {
+      background: #28a745;
+    }
+    
+    .card-type.problem {
+      background: #dc3545;
+    }
+    
+    .controls {
+      margin: 2rem 0;
+    }
+    
+    .btn {
+      background: #007acc;
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      margin: 0 0.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.3s ease;
+    }
+    
+    .btn:hover {
+      background: #005fa3;
+    }
+    
+    .stats {
+      margin: 1rem 0;
+      font-size: 0.9rem;
+      color: #666;
+    }
+    
+    .loading {
+      text-align: center;
+      color: #666;
+      font-style: italic;
+    }
+    
+    .filter-controls {
+      margin: 1rem 0;
+    }
+    
+    .filter-btn {
+      background: #6c757d;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      margin: 0 0.25rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background 0.3s ease;
+    }
+    
+    .filter-btn.active {
+      background: #007acc;
+    }
+    
+    .filter-btn:hover {
+      opacity: 0.8;
+    }
+    
+    /* Dark mode styles */
+    .latex-dark .flashcard {
+      background: #2a2a2a;
+      border-color: #666;
+      color: #e0e0e0;
+    }
+    
+    .latex-dark .flashcard.revealed {
+      background: #1a3a4a;
+      border-color: #4a9eff;
+    }
+    
+    .latex-dark .problem-statement {
+      background: #3a3a2a;
+      border-color: #5a5a4a;
+      color: #d4c69a;
+    }
+    
+    .latex-dark .question {
+      color: #e0e0e0;
+    }
+    
+    .latex-dark .answer {
+      color: #4a9eff;
+      border-top-color: #555;
+    }
+  </style>
+</head>
+<body>
+
+<h1><a href="https://laielli.github.io/">michael laielli</a></h1>
+
+<h2>coding flashcards</h2>
+<hr>
+
+<div class="flashcard-container">
+  <div id="loading" class="loading">Loading flashcards...</div>
+  
+  <div id="flashcard-area" style="display: none;">
+    <div class="filter-controls">
+      <button class="filter-btn active" id="filter-all">All</button>
+      <button class="filter-btn" id="filter-patterns">Patterns</button>
+      <button class="filter-btn" id="filter-problems">Problems</button>
+    </div>
+    
+    <div class="stats">
+      <span id="card-count">Card 1 of 0</span>
+    </div>
+    
+    <div id="flashcard" class="flashcard" style="position: relative;">
+      <div class="card-type" id="card-type">Pattern</div>
+      <div class="flashcard-content">
+        <div class="problem-statement" id="problem-statement" style="display: none;">
+          Problem statement will appear here
+        </div>
+        <div class="question" id="question">Click to load a question</div>
+        <div class="answer" id="answer" style="display: none;">Answer will appear here</div>
+      </div>
+    </div>
+    
+    <div class="controls">
+      <button class="btn" id="new-card-btn">New Card</button>
+      <button class="btn" id="reveal-btn" style="display: none;">Reveal Answer</button>
+      <button class="btn" id="next-btn" style="display: none;">Next Card</button>
+    </div>
+    
+    <div class="stats">
+      Total cards: <span id="total-cards">0</span> |
+      Patterns: <span id="pattern-count">0</span> |
+      Problems: <span id="problem-count">0</span>
+    </div>
+  </div>
+</div>
+
+<hr>
+<p><a href="index.html">← Back to Coding</a></p>
+
+<button id="dark-mode-toggle">Toggle dark mode</button>
+
+<script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+<script>
+class CodingFlashcardApp {
+  constructor() {
+    this.flashcards = [];
+    this.currentCard = null;
+    this.currentIndex = 0;
+    this.isRevealed = false;
+    this.usedCards = new Set();
+    this.currentFilter = 'all';
+    this.filteredCards = [];
+    
+    this.initializeElements();
+    this.loadFlashcards();
+    this.setupEventListeners();
+  }
+  
+  initializeElements() {
+    this.loadingEl = document.getElementById('loading');
+    this.flashcardArea = document.getElementById('flashcard-area');
+    this.flashcardEl = document.getElementById('flashcard');
+    this.problemStatementEl = document.getElementById('problem-statement');
+    this.questionEl = document.getElementById('question');
+    this.answerEl = document.getElementById('answer');
+    this.cardTypeEl = document.getElementById('card-type');
+    this.newCardBtn = document.getElementById('new-card-btn');
+    this.revealBtn = document.getElementById('reveal-btn');
+    this.nextBtn = document.getElementById('next-btn');
+    this.cardCountEl = document.getElementById('card-count');
+    this.totalCardsEl = document.getElementById('total-cards');
+    this.patternCountEl = document.getElementById('pattern-count');
+    this.problemCountEl = document.getElementById('problem-count');
+    
+    // Filter buttons
+    this.filterAllBtn = document.getElementById('filter-all');
+    this.filterPatternsBtn = document.getElementById('filter-patterns');
+    this.filterProblemsBtn = document.getElementById('filter-problems');
+  }
+  
+  async loadFlashcards() {
+    try {
+      // Load patterns
+      const patternFiles = ['hash-table.yaml', 'hash-function.yaml', 'two-pointer.yaml'];
+      const patternPromises = patternFiles.map(file => this.loadYamlFile(`patterns/${file}`, 'pattern'));
+      
+      // Load problems
+      const problemFiles = ['two-sum.yaml'];
+      const problemPromises = problemFiles.map(file => this.loadYamlFile(`problems/${file}`, 'problem'));
+      
+      const allResults = await Promise.all([...patternPromises, ...problemPromises]);
+      
+      // Flatten all flashcards
+      this.flashcards = allResults.flat();
+      
+      this.updateStats();
+      this.applyFilter();
+      this.loadingEl.style.display = 'none';
+      this.flashcardArea.style.display = 'block';
+      this.loadRandomCard();
+    } catch (error) {
+      console.error('Error loading flashcards:', error);
+      this.loadingEl.textContent = 'Error loading flashcards. Please check if YAML files exist.';
+    }
+  }
+  
+  async loadYamlFile(filePath, type) {
+    try {
+      const response = await fetch(filePath);
+      if (!response.ok) {
+        console.warn(`Could not load ${filePath}`);
+        return [];
+      }
+      
+      const yamlText = await response.text();
+      const data = jsyaml.load(yamlText);
+      
+      if (!data || !data.flashcards) {
+        console.warn(`No flashcards found in ${filePath}`);
+        return [];
+      }
+      
+      return data.flashcards.map(card => ({
+        question: card.question,
+        answer: card.answer,
+        type: type,
+        source: data.name || filePath,
+        problem: data.problem || null
+      }));
+    } catch (error) {
+      console.error(`Error loading ${filePath}:`, error);
+      return [];
+    }
+  }
+  
+  updateStats() {
+    const patternCount = this.flashcards.filter(card => card.type === 'pattern').length;
+    const problemCount = this.flashcards.filter(card => card.type === 'problem').length;
+    
+    this.totalCardsEl.textContent = this.flashcards.length;
+    this.patternCountEl.textContent = patternCount;
+    this.problemCountEl.textContent = problemCount;
+  }
+  
+  applyFilter() {
+    switch (this.currentFilter) {
+      case 'patterns':
+        this.filteredCards = this.flashcards.filter(card => card.type === 'pattern');
+        break;
+      case 'problems':
+        this.filteredCards = this.flashcards.filter(card => card.type === 'problem');
+        break;
+      default:
+        this.filteredCards = [...this.flashcards];
+    }
+    
+    // Reset used cards when filter changes
+    this.usedCards.clear();
+  }
+  
+  loadRandomCard() {
+    if (this.filteredCards.length === 0) return;
+    
+    // Reset if all cards have been used
+    if (this.usedCards.size >= this.filteredCards.length) {
+      this.usedCards.clear();
+    }
+    
+    let randomIndex;
+    do {
+      randomIndex = Math.floor(Math.random() * this.filteredCards.length);
+    } while (this.usedCards.has(randomIndex) && this.usedCards.size < this.filteredCards.length);
+    
+    this.usedCards.add(randomIndex);
+    this.currentCard = this.filteredCards[randomIndex];
+    this.currentIndex = randomIndex;
+    this.displayCard();
+  }
+  
+  displayCard() {
+    if (!this.currentCard) return;
+    
+    // Set card type indicator
+    this.cardTypeEl.textContent = this.currentCard.type === 'pattern' ? 'Pattern' : 'Problem';
+    this.cardTypeEl.className = `card-type ${this.currentCard.type}`;
+    
+    // Show/hide problem statement
+    if (this.currentCard.problem) {
+      this.problemStatementEl.textContent = this.currentCard.problem;
+      this.problemStatementEl.style.display = 'block';
+    } else {
+      this.problemStatementEl.style.display = 'none';
+    }
+    
+    this.questionEl.textContent = this.currentCard.question;
+    this.answerEl.textContent = this.currentCard.answer;
+    this.answerEl.style.display = 'none';
+    this.flashcardEl.classList.remove('revealed');
+    this.isRevealed = false;
+    
+    this.updateCardCount();
+    this.updateButtons();
+  }
+  
+  revealAnswer() {
+    this.answerEl.style.display = 'block';
+    this.flashcardEl.classList.add('revealed');
+    this.isRevealed = true;
+    this.updateButtons();
+  }
+  
+  updateCardCount() {
+    this.cardCountEl.textContent = `Card ${this.usedCards.size} of ${this.filteredCards.length}`;
+  }
+  
+  updateButtons() {
+    if (this.isRevealed) {
+      this.revealBtn.style.display = 'none';
+      this.nextBtn.style.display = 'inline-block';
+    } else {
+      this.revealBtn.style.display = 'inline-block';
+      this.nextBtn.style.display = 'none';
+    }
+  }
+  
+  setFilter(filter) {
+    this.currentFilter = filter;
+    
+    // Update button states
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById(`filter-${filter}`).classList.add('active');
+    
+    this.applyFilter();
+    this.loadRandomCard();
+  }
+  
+  setupEventListeners() {
+    this.newCardBtn.addEventListener('click', () => {
+      this.loadRandomCard();
+    });
+    
+    this.revealBtn.addEventListener('click', () => {
+      this.revealAnswer();
+    });
+    
+    this.nextBtn.addEventListener('click', () => {
+      this.loadRandomCard();
+    });
+    
+    this.flashcardEl.addEventListener('click', () => {
+      if (!this.isRevealed) {
+        this.revealAnswer();
+      }
+    });
+    
+    // Filter buttons
+    this.filterAllBtn.addEventListener('click', () => this.setFilter('all'));
+    this.filterPatternsBtn.addEventListener('click', () => this.setFilter('patterns'));
+    this.filterProblemsBtn.addEventListener('click', () => this.setFilter('problems'));
+    
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault();
+        if (!this.isRevealed) {
+          this.revealAnswer();
+        } else {
+          this.loadRandomCard();
+        }
+      } else if (e.key === 'n' || e.key === 'N') {
+        this.loadRandomCard();
+      } else if (e.key === '1') {
+        this.setFilter('all');
+      } else if (e.key === '2') {
+        this.setFilter('patterns');
+      } else if (e.key === '3') {
+        this.setFilter('problems');
+      }
+    });
+  }
+}
+
+// Dark mode functionality
+const darkModeToggle = document.querySelector("#dark-mode-toggle");
+darkModeToggle.addEventListener('click', () => {
+  document.body.classList.toggle("latex-dark");
+});
+
+// Initialize the app when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+  new CodingFlashcardApp();
+});
+
+// MathJax configuration
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$']],
+  },
+};
+</script>
+
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mtml-chtml.js"></script>
+</body>
+</html>

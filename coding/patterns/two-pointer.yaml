@@ -1,0 +1,16 @@
+name: "two-pointer"
+flashcards:
+  - question: Give a brief description of the two-pointer pattern.
+    answer: "The two-pointer pattern is a common algorithmic technique used to efficiently solve problems involving linear data structures like arrays, strings, or linked lists. It involves using two pointers (variables representing indices or positions) that traverse the data structure to perform comparisons, modifications, or searches. This approach often reduces time complexity from O(n²) to O(n)."
+  - question: What is the primary benefit of using the two-pointer pattern?
+    answer: "Efficiency: The primary benefit of the two-pointer pattern is its ability to optimize time complexity by avoiding nested loops or redundant operations."
+  - question: What is the typical time complexity of the two-pointer pattern?
+    answer: "O(n): The two-pointer pattern typically reduces time complexity from O(n²) to O(n) by eliminating nested loops or redundant operations."
+  - question: What is the typical space complexity of the two-pointer pattern?
+    answer: "O(1): The two-pointer pattern typically requires only a constant amount of extra space, making it space-efficient."
+  - question: When is the two-pointer pattern most effective?
+    answer: "Sorted Data: It is particularly effective with sorted arrays, where the order allows for predictable movement of pointers based on conditions."
+  - question: What is the typical use case for the two-pointer pattern?
+    answer: "Finding pairs or triplets in sorted arrays: The two-pointer pattern is commonly used to find pairs or triplets that satisfy certain conditions in sorted arrays."
+  - question: What is the typical implementation of the two-pointer pattern?
+    answer: "Two-pointer pattern is typically implemented using two pointers that traverse the data structure in opposite directions. The pointers are initialized at the start and end of the data structure, and move towards each other until they meet or the condition is satisfied."

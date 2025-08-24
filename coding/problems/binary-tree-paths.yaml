@@ -1,0 +1,26 @@
+name: "Binary Tree Paths"
+patterns: ["backtracking"]
+difficulty: "easy"
+url: "https://leetcode.com/problems/binary-tree-paths/"
+problem: |
+  Given the root of a binary tree, return all root-to-leaf paths in any order.
+  A leaf is a node with no children.
+flashcards:
+  - question: "What traversal method is typically used to gather all root-to-leaf paths?"
+    answer: "Depth-first search (DFS)"
+  - question: "Why is backtracking useful in this problem?"
+    answer: "Backtracking (via recursion) is useful because we can build a path as we go down the tree and then remove the last node (backtrack) when we return up the tree. This ensures each root-to-leaf path is recorded correctly without interfering with others."
+  - question: "What is/are the pattern(s) of the solution?"
+    answer: "Backtracking"
+  - question: "How are root-to-leaf paths represented in the output?"
+    answer: "Each path is typically represented as a string with node values separated by \\\"->\\\" (for example: \\\"1->2->5\\\")."
+  - question: "Briefly explain how to collect all root-to-leaf paths."
+    answer: "Perform a DFS from the root, accumulating the path. When a leaf node is reached, record the current path. As the recursion unwinds (backtracks), remove or ignore the last node and continue exploring other branches."
+  - question: "List the steps to find all root-to-leaf paths using DFS."
+    answer: |
+      1. If the tree is empty, return an empty list.
+      2. Start DFS from the root with an initial path (as a list or string containing the root's value).
+      3. If the current node is a leaf, record the current path (convert to the desired string format).
+      4. If the current node has a left child, recursively DFS on the left child with the updated path.
+      5. If the current node has a right child, recursively DFS on the right child with the updated path.
+      6. The recursion will naturally backtrack, removing the leaf nodes as it returns up. Collect all recorded paths and return them.
