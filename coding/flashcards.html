@@ -263,12 +263,12 @@ class CodingFlashcardApp {
   
   async loadFlashcards() {
     try {
-      // Load patterns
-      const patternFiles = ['hash-table.yaml', 'hash-function.yaml', 'two-pointer.yaml'];
+      // Discover and load all pattern files
+      const patternFiles = await this.discoverYamlFiles('patterns/');
       const patternPromises = patternFiles.map(file => this.loadYamlFile(`patterns/${file}`, 'pattern'));
       
-      // Load problems
-      const problemFiles = ['two-sum.yaml'];
+      // Discover and load all problem files
+      const problemFiles = await this.discoverYamlFiles('problems/');
       const problemPromises = problemFiles.map(file => this.loadYamlFile(`problems/${file}`, 'problem'));
       
       const allResults = await Promise.all([...patternPromises, ...problemPromises]);
@@ -285,6 +285,58 @@ class CodingFlashcardApp {
       console.error('Error loading flashcards:', error);
       this.loadingEl.textContent = 'Error loading flashcards. Please check if YAML files exist.';
     }
+  }
+  
+  async discoverYamlFiles(directory) {
+    // Known YAML files - fallback list in case directory listing fails
+    const knownFiles = {
+      'patterns/': [
+        'backtracking.yaml',
+        'binary-search.yaml', 
+        'dynamic-programming.yaml',
+        'greedy-algorithms.yaml',
+        'hash-function.yaml',
+        'hash-table.yaml',
+        'sliding-window.yaml',
+        'two-pointer.yaml'
+      ],
+      'problems/': [
+        'best-time-to-buy-and-sell-stock.yaml',
+        'binary-tree-paths.yaml',
+        'climbing-stairs.yaml',
+        'contains-duplicate.yaml',
+        'first-bad-version.yaml',
+        'maximum-average-subarray.yaml',
+        'maximum-subarray.yaml',
+        'two-sum-2.yaml',
+        'two-sum.yaml',
+        'valid-anagram.yaml',
+        'valid-palindrome.yaml'
+      ]
+    };
+    
+    try {
+      // Try to fetch a directory listing (this works with some static file servers)
+      const response = await fetch(directory);
+      if (response.ok) {
+        const html = await response.text();
+        // Extract .yaml files from directory listing HTML
+        const yamlFiles = [];
+        const regex = /href="([^"]*\.yaml)"/g;
+        let match;
+        while ((match = regex.exec(html)) !== null) {
+          yamlFiles.push(match[1]);
+        }
+        if (yamlFiles.length > 0) {
+          return yamlFiles;
+        }
+      }
+    } catch (error) {
+      console.log(`Could not auto-discover files in ${directory}, using known file list`);
+    }
+    
+    // Fallback to known files
+    return knownFiles[directory] || [];
   }
   
   async loadYamlFile(filePath, type) {
