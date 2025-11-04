@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://latex.now.sh/style.css">
+</head>
+<body>
+
+<!-- <h1>Michael Laielli</h1> -->
+<h1><a href="https://laielli.github.io/">michael laielli</a></h1>
+
+
+<h2>The Neural Decade</h2>
+<hr>
+
+<blockquote>
+
+<p>
+  <b>Geoff</b>: (meeting with a grad student in his office) "Close your eyes.  Imagine three dimensions... now say fourteen out loud..."
+</p>
+<p>
+  (the door springs open and someone pops their head in)
+</p>
+<p>
+  <b>Geoff</b>: "Good morning, Ilya.  How are.."
+</p>
+<p>
+  <b>Ilya</b>: (looking like he just sprinted from across the building) "the training runs have finished...  you're not going to believe this. (dramatic pause) 14% error on the validation set."
+</p>
+<p>
+  <b>Geoff</b>: (pauses, then smirks) "Ilya, I've believed this for the last 10 years."
+</p>
+</blockquote>
+
+<p>
+Let's take a tour through the last 10 years or so of computer vision. This tour will start at the AlexNet/ImageNet Deep Learning breakthrough of 2012
+and take us up to today's Vision Language Models.  This already sounds like the many many (many) blog posts that have already been written about
+deep learning breakthroughs, so I want to try something different - something that tells the story of the series of breakthroughs that have led to the rapid explosion
+of AI technology in such a way that highlights the joy of discovery and the agony of setbacks. We're going to follow a small, fictional team of researchers in a high
+profile university lab. Being naive grad students starting a new project, their optimism and energy
+are dangerously high and they begin to get carried away...
+</p>
+
+<h3>The Research Team</h3>
+
+Let's meet the team.
+
+<ul>
+  <li><b>Second year PhD student</b>: A.k.a. "2nd year". Curiosity, naivety,and optimism are incredibly high.  Experience is incredibly low. (Mix of Tetra, Yuri, Me),  </li>
+  <li><b>Seventh year PhD student</b>: A.k.a. "<b>7th year</b>". Confidence is high, but curiosity is low. They completed their qualifying exams three years ago
+    and have unfortunately fallen victim to the dangerous period of the PhD known as "A.B.D." or "All but the dissertation".
+    (Juergen, Gary Marcus)</li>
+  <li><b>Postdoc</b>: Experience, knowledge, and capability are high. Confidence and curiosity are well balanced.  Time and 
+    bandwidth are extremely limited, but can do anything better and 10x faster than everyone else. *WHATEVER YOU DO, 
+    DO NOT TELL THEM "THIS IS A BAD IDEA"* (Mix of Miruka, Ilya, and Andrej K.)
+  <li><b>Advisor</b>: Senior faculty member. Wisdom is incredibly high, but often cryptic. Sometimes seems to just enjoy being a tenure-protected contrarian. Hasn't coded since their faculty profile picture was taken. (Mix of Geoff Hinton, Yann LeCun, Richard Sutton, Fei Fei Li, Andrew Ng, )
+</ul>
+
+<h3>The ImageNet Challenge</h3>
+
+<p>
+The year is 2012. Goeff Hinton, Ilya Sutskever, and Alex Krizhevsky are about to shock the (computer vision) world by entering their AlexNet model into the ImageNet Challenge and win by margins previously unheard of.
+</p>
+
+<p>
+  <b>2nd year</b>: "Wait, why shouldn't we try to solve computer vision?"
+</p>
+<p>
+<b>7th year</b>: "Why don't we try to solve computer vision?? Like, ALL of computer vision?"
+</p>
+
+<p>
+<b>2nd year</b>: "Yeah, I mean... why not?"
+</p>
+
+<p>
+**<b>7th year</b>**: "I'll tell you why not. It took evolution 400 million years to get to human-level visual intelligence, and you want to solve it in a summer?"
+</p>
+
+<p>
+<b>2nd year</b>: "An MIT Professor thought so too. Maybe he was onto something."
+</p>
+
+<p>
+<b>Postdoc</b>: "Yep, you're in good company..."
+</p>
+
+<p>
+<b>2nd year</b>: "See! I'm in good company."
+</p>
+
+<p>
+<b>Postdoc</b>: "... and by that I mean, like your predecesor, you have fallen into the trap of taking our human capabilities for granted. 
+              Don't worry, it happens to the best of us. In fact, it has happened to me.  More than once.  But that's for another time."
+
+<p>
+<b>Postdoc</b>: "How about this? Instead of trying to solve all of computer vision, let's start with a single problem: The ImageNet Challenge.
+              Categorize images into 1000 categories of objects including types of animals, cars, planes, etc."
+</p>
+
+<p>
+<b>2nd year</b>: "Yes!!! Let's do it!  Give me the weekend to work on it, and I bet I can get us most of the way there."
+</p>
+
+<p>
+<b>7th year</b>: (visibly holding back laughter) Oh my... (looking at post doc)who's gonna tell her?"
+</p>
+
+<p>
+<b>Postdoc</b>: "I love your enthusiasm, 2nd year, but we're gonna need a better plan. Some of the best labs in the world have been grinding away at this for years. Interestingly, I'm hearing rumors of a huge breakthrough."
+</p>
+
+<p>
+<b>2nd year</b>: "So someone solved it.  Then why would we want to do it again?"
+</p>
+
+<p>
+<b>Postdoc</b>: "Hardly, but it sounds like thet made huge progress on the benchmark. Apparently, they achieved a 16% error rate.  The previous best was 26%.
+</p>
+
+<p>
+<b>7th year</b>: "No way.  Seriously, there's no way that's true."
+</p>
+
+<p>
+<b>2nd year</b>: (looking puzzled) "I don't get it. 16% error on what?"
+</p>
+
+<p>
+<b>7th year</b>: "Ok, so it's a 16% error rate on the top 5 predictions.  So for each image, the model can make 5 predictions, and if it gets one right, it's correct.  But if none of the top 5 guesses are correct, it's an error. Repeat for 500 test images, and calculate the percentage you got wrong."
+</p>
+
+<p>
+<b>2nd year</b>: "That sounds easy. You're telling me a 16% error rate is good?"
+</p>
+
+<p>
+<b>7th year</b>: "Not just good, insanely good.  Too good, actually.  It can't be true.  That would be a jump of about 10% from last year's best and that just doesn't happen.  Progress has been incremental, 1 to 3% jumps for years and years."
+</p>
+
+<p>
+<b>Postdoc</b>: "I'm afraid it's probably true.  While its not official, my source at the Univeristy of Toronto is trustworthy."
+</p>
+
+<p>
+<b>7th year</b>: (looking forlorn) "If its true then my dissertaion is worthless"
+</p>
+
+<p>
+<b>Postdoc</b>: ...
+</p>
+
+<p>
+<b>7th year</b>: ...
+</p>
+
+<p>
+<b>Postdoc</b>: I wouldnt say worthl..
+</p>
+
+<p>
+<b>7th year</b>: (stands up abruptly; chair screeching and sliding across the room; storms off...)
+</p>
+
+<p>
+...
+</p>  
+
+<p>
+<b>2nd year</b>: (to Postdoc) "Woah.  What was that about?"
+</p>
+
+<p>
+<b>Postdoc</b>: "Well, finishing a PhD can be stressful, to say the least. (face grimaces as he looks at the second year PhD student)
+... you know what? Nevermind.  Let's get back to work."
+</p>
+
+<h3>Capacity to learn</h3>
+
+<p>
+  <b>2nd year</b>: So what's AlexNet?
+</p>
+
+<p>
+  <b>Postdoc</b>: AlexNet is some kind of a neural network algorithm. From what I gathered, the found a way to train a version with several layers and got really good results.
+</p>
+
+<p>
+  <b>2nd year</b>: I didn't think those algorithms worked very well.
+</p>
+
+<p>
+  <b>Postdoc</b>: I spent a year of my PhD on neural networks.  They work quite well actually but they can never seem to beat the state of the art methods.  They're not very popular.
+</p>
+
+<p>
+  <b>2nd year</b>: You're saying that because their network has more layers, it's somehow better?
+</p>
+
+<p>
+  <b>Postdoc</b>: That's what I'm hearing, yes.
+</p>
+
+<p>
+  <b>2nd year</b>: Why would that be?
+</p>
+
+<p>
+  <b>Postdoc</b>: Adding more layers to a network increases its capacity to learn more complex features.
+</p>
+
+<p>
+  <b>Postdoc</b>: Researchers have been trying to train neural networks with more layers for years, but it's been a challenge
+</p>
+
+<hr>
+<br>
+<button id="dark-mode-toggle">Toggle dark mode</button>
+<script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'],],
+      },
+    }
+    const darkModeToggle = document.querySelector("#dark-mode-toggle")
+    .addEventListener('click', () => {
+     document.body.classList.toggle("latex-dark")
+    })
+  ;
+  </script>
+
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</body>
+</html>

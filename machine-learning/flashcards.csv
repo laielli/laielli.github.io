@@ -8,3 +8,17 @@ what is a generative adversarial network?,a generative adversarial network (GAN)
 what is a variational autoencoder?,a variational autoencoder (VAE) is a type of neural network that is particularly effective for generating new data, such as images or text. It uses a combination of a generator and a decoder to generate new data, and a variational loss function to ensure that the generated data is realistic.
 what is a denoising autoencoder?,a denoising autoencoder (DAE) is a type of neural network that is particularly effective for removing noise from data, such as images or audio. It uses a combination of a generator and a decoder to generate new data, and a denoising loss function to ensure that the generated data is realistic.
 what is a generative adversarial network?,a generative adversarial network (GAN) is a type of neural network that is particularly effective for generating new data, such as images or text. It uses two neural networks, a generator and a discriminator, that compete with each other to generate realistic data.
+"What is a 2D weight matrix with shape [out, in]?","A matrix W that maps an input vector x of length in to an output vector y of length out via y = W x."
+"In y = W x, what are the shapes of x, y, and W?","x ∈ R^in, y ∈ R^out, W ∈ R^{out×in}."
+"What is a weight update during training?","Applying a small step to weights: W <- W - η * Δ, where Δ is a (often momentum-smoothed) gradient-like update."
+"What does 'dominated by a few directions' mean for a matrix update?","Most of the update’s effect is concentrated along a small number of input/output directions."
+"Define anisotropy in this context.","Directional imbalance: the update stretches some directions much more than others."
+"What decomposition reveals those 'directions'?","The Singular Value Decomposition (SVD): Δ = U Σ V^T."
+"In the SVD, what are the right singular vectors (columns of V)?","Special input directions that Δ acts on."
+"In the SVD, what are the left singular vectors (columns of U)?","Corresponding output directions after applying Δ."
+"What do the singular values σ1 ≥ σ2 ≥ ... in Σ tell you?","How strongly each singular direction is scaled by the update."
+"How do singular values indicate anisotropy?","If σ1 is much larger than the rest (only a few big σi), the update is highly anisotropic."
+"What does 'low-rank-ish update' imply?","Only a few singular values are large, so the update effectively has low rank and focuses on few directions."
+"Give the geometric mental picture for anisotropy.","Multiplying the unit circle (or sphere) by an anisotropic matrix turns it into a skinny ellipse—heavy stretch along 1–2 axes."
+"In plain terms, what is the shape [out, in] telling you?","How many outputs the layer produces (out) from how many input features it receives (in)."
+"Why do we care about anisotropy in updates?","Updates that favor only a few directions can neglect other useful directions, potentially slowing or biasing learning."
