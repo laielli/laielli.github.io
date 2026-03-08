@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://latex.now.sh/style.css">
+</head>
+<body>
+
+<h1><a href="https://laielli.github.io/">michael laielli</a></h1>
+
+<h2>SoftMax as probabilities relative to the largest logit</h2>
+<hr>
+
+<p>The common implementation of SoftMax reveals a nice mental model for thinking about SoftMax in deep neural networks.</p>
+
+<p>Let's start with the mathematical definition of SoftMax is:</p>
+
+<p>For logits $z_1, z_2, ..., z_n$:</p>
+
+$$
+\text{softmax}(z_i) = \frac{e^{z_i}}{\sum_{j=1}^{n} e^{z_j}}
+$$
+
+<p>The beauty of this function is that it wrangles the unbounded logits from $[-\infty, \infty]$ into neat little probabilities in the range $[0, 1]$ with only two steps. First, the exponential function, $e^z$, moves the values into $[0, \infty]$, then the each value is simply normalized.</p>
+
+<p>Implementing this directly can cause overflow since $e^{z_i}$ grows <b>extremely fast</b>. Common frameworks like PyTorch handle this by subtracting the max logit like so:</p>
+
+<pre><code>exp_logits = np.exp(logits - np.max(logits))
+softmax = exp_logits / exp_logits.sum()</code></pre>
+
+<p>It's OK to subtract a constant value from each logit because <b>SoftMax is shift invariant</b> (proof below). <b>Subtracting the max logit guarantees numerical stability</b> since the exponential of the max is equal to one $e^{z_{max} - z_{max}} = e^0 = 1$ and all others are in the range $0 < e^{z_i - z_{max}} \le 1$. This makes overflow impossible.</p>
+
+<p>$0 < e^{z_i - z_{max}} \le 1$</p>
+
+<p>This numerical stability trick reveals a deeper insight about SoftMax: its all about the relative probabilities</p>
+
+<p>Each probability depends only on:</p>
+
+<p>$z_i - m$</p>
+
+<p>which is <b>how far a logit is from the winner</b>.</p>
+
+<h3>SoftMax Shift Invariance proof</h3>
+
+<p>If you subtract the same constant $c$ from every logit:</p>
+
+<p>$\frac{e^{z_i}}{\sum_j e^{z_j}} = \frac{e^{z_i - c}}{\sum_j e^{z_j - c}}$</p>
+
+<p>Proof:</p>
+
+<p>$e^{z_i-c} = \frac{e^{z_i}}{e^c}$</p>
+
+<p>$\sum_j e^{z_j-c} = \frac{1}{e^c}\sum_j e^{z_j}$</p>
+
+<p>So:</p>
+<p>$\frac{e^{z_i-c}}{\sum_j e^{z_j-c}} = \frac{e^{z_i}/e^c}{(\sum_j e^{z_j})/e^c} = \frac{e^{z_i}}{\sum_j e^{z_j}}$</p>
+
+<p>The constant cancels out. Thus we can subtract <b>any constant</b> without changing softmax.</p>
+
+<h3>Softmax is really computing probabilities relative to the largest logit</h3>
+
+<p>$0 < e^{z_i - z_{max}} \le 1$</p>
+
+<p><a href="/">← Home</a></p>
+
+<hr>
+<br>
+<button id="dark-mode-toggle">Toggle dark mode</button>
+<script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'],],
+      },
+    }
+    const darkModeToggle = document.querySelector("#dark-mode-toggle")
+    .addEventListener('click', () => {
+     document.body.classList.toggle("latex-dark")
+    })
+  ;
+  </script>
+
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</body>
+</html>
