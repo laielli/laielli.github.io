@@ -24,7 +24,7 @@
   <!-- Open Graph (so the link previews nicely when shared in an application or email) -->
   <meta property="og:type" content="profile" />
   <meta property="og:title" content="Michael Laielli — Machine Learning Engineer" />
-  <meta property="og:description" content="Deep learning & computer vision, research to production. Lead engineer on Drowsy Driver Alert; co-creator of xView; UC Berkeley PhD in label-efficient computer vision." />
+  <meta property="og:description" content="Deep learning & computer vision, research to production. Lead engineer on Drowsy Driver Alert; co-creator of xView; PhD candidate at UC Berkeley in label-efficient computer vision." />
   <meta property="og:url" content="https://laielli.github.io/work/" />
   <meta property="og:image" content="https://laielli.github.io/og/default.png" />
 
@@ -69,14 +69,14 @@
 
         <p class="summary">
           Fifteen years in machine learning and computer vision, the last five taking camera-based driving
-          perception from research into large-scale production. Led a safety-critical driving model from a
-          stalled 40% against a 70% precision bar to <b>0.9 at fixed recall</b>, through General Availability
+          perception from research into large-scale production. Led a safety-critical driving model past its
+          General Availability precision and recall targets, through launch
           to <b>several hundred thousand vehicles in 8+ countries</b>, running in real time under TensorRT and
           ONNX Runtime on Jetson-class hardware, mainly by making the data better while leading the labeling
           team. Curated the training and eval data for a driving foundation VLM on dual inward/outward video,
           establishing zero-shot scaling behavior (<b>5× on held-out tasks</b>) across tasks including red-light
           and stop-sign violations; also rare traffic-sign recognition tooling and transformer-based tracking.
-          Berkeley (BAIR) Ph.D. work in label-efficient CV; <b>xView</b> (540+ citations); established a CRADA
+          PhD candidate at UC Berkeley (BAIR) in label-efficient CV; <b>xView</b> (540+ citations); established a CRADA
           with NVIDIA at NGA.
         </p>
       </section>
@@ -98,14 +98,14 @@
               (occlusion, look-down, drinking). Then <b>knowledge distillation</b> stretched a 40K-clip
               hand-labeled set across 60× more data via teacher pseudo-labels. Tracked in Weights &amp; Biases.</li>
             <li><b>Productized for safety, latency, and robustness on embedded hardware.</b> Took the model
-              from research through GA (2023) to global rollout: a <b>MobileNetV2 + Temporal Shift Module</b>
-              student distilled from a 6-model ResNet50 teacher ensemble to <b>8.9 MB ONNX</b>, deployed under
+              from research through GA (2023) to global rollout: a teacher ensemble distilled into a compact
+              <b>ONNX edge model</b>, deployed under
               TensorRT and ONNX Runtime on Jetson-class hardware in real time on <b>several hundred thousand
-              devices across 8+ countries</b>; <b>precision 0.4 → 0.9 at fixed recall</b>, clearing the 70% bar.
+              devices across 8+ countries</b>; drove precision and recall beyond the GA-gate target KPI.
               Co-inventor, pending patent
               (<a href="https://patents.google.com/patent/WO2024173817A1">WO2024173817A1</a>).</li>
             <li><b>Calibrated the precision/recall trade-off to the largest customer.</b> Hand-labeled ~800
-              videos to tie the model's drowsy score to lane-swerving events, giving Amazon an objective basis
+              videos to tie the model's drowsy score to lane-swerving events, giving the customer an objective basis
               for choosing its own alert threshold to match its review capacity, and authored the Progressive
               Drowsy Scoring System to standardize that calibration.</li>
             <li><b>VLM training and evals on dual inward/outward driving video.</b> Carefully curated the
