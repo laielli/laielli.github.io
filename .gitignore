@@ -1,1 +1,6 @@
 .DS_Store
+
+# Internal agent scratch — not part of the public site
+claude_input/
+claude_output/
+.gstack/

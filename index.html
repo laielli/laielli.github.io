@@ -4,65 +4,225 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="https://latex.now.sh/style.css">
-</head>
-<body>
 
-<h1><a href="https://laielli.github.io/">michael laielli</a></h1>
-
-<h2>Self-Supervised Learning</h2>
-<hr>
-<ul>
-  <li><a href="education/softmax/">SoftMax</a> — Probabilities relative to the largest logit <small>(2026-03-08)</small></li>
-  <li><a href="education/computer-vision/">Computer Vision</a> — "The Neural Decade" <small>(2025-11-04)</small></li>
-  <li><a href="education/coding/flashcards.html">Coding Flashcards</a> — Interactive flashcards for coding patterns <small>(2025-08-23)</small></li>
-  <li><a href="education/machine-learning/flashcards.html">ML Flashcards</a> — Interactive flashcards for ML concepts <small>(2025-08-23)</small></li>
-  <li><a href="education/embedded-systems/">Embedded Systems</a> — Binary, digital voltages, data representation <small>(2024-12-14)</small></li>
-</ul>
-
-<h2>Recipes & Travel</h2>
-<hr>
-<ul>
-  <li><a href="travel/trip-ideas/">Trip Ideas</a> — Cooking & cultural experiences <small>(2026-01-02)</small></li>
-  <li><a href="recipes/chicken-parm/">Chicken Parm</a> <small>(2025-12-28)</small></li>
-  <li><a href="recipes/chocolate-mousse-cake/">Chocolate Mousse Cake</a> <small>(2025-12-28)</small></li>
-  <li><a href="recipes/sushi-rice/">Sushi Rice</a> <small>(2025-12-28)</small></li>
-  <li><a href="travel/japan-2024/">Japan 2024</a> — Tokyo, Kyoto, Atami <small>(2025-09-12)</small></li>
-  <li><a href="recipes/japanese-milk-bread/">Japanese Milk Bread</a> <small>(2024-12-14)</small></li>
-</ul>
-
-<h2>Surfing, Climbing, & Jiu-Jitsu</h2>
-<hr>
-<ul>
-  <li><a href="">...</a> — ... <small>(2026-??-??)</small></li>
-</ul>
-
-<h2>About Me</h2>
-<hr>
-<p>Research engineer working on AI for driver safety. Formerly, a PhD candidate working on <a href="https://dl.acm.org/doi/10.1145/3332165.3347927">AI/HCI for label-efficient computer</a> vision at UC Berkeley. And before that, a Research Program Manager working on <a href="https://paperswithcode.com/dataset/xview">machine learning datasets for remote sensing</a> at the National Geospatial-Intelligence Agency.</p>
-
-<br><br>
-
-site format: <a href="https://latex.vercel.app">https://latex.vercel.app</a>
-
-<br><br>
-
-<button id="dark-mode-toggle">Toggle dark mode</button>
-<script>
-    MathJax = {
-      tex: {
-        inlineMath: [['$', '$'],],
-      },
-    }
-    const darkModeToggle = document.querySelector("#dark-mode-toggle")
-    .addEventListener('click', () => {
-     document.body.classList.toggle("latex-dark")
-    })
-  ;
+  <!-- Apply saved theme before paint to avoid a flash of the wrong colors -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("theme");
+        if (t === "dark" || t === "light")
+          document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    })();
   </script>
 
-<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <title>Michael Laielli — Machine Learning Engineer (Computer Vision &amp; Video)</title>
+  <meta name="description" content="Michael Laielli is a machine learning engineer working on computer vision, video, and vision-language models; most recently Staff Research Engineer at Netradyne. Lead engineer on Drowsy Driver Alert, co-creator of the xView benchmark, and a UC Berkeley PhD researcher in label-efficient computer vision." />
+  <link rel="canonical" href="https://laielli.github.io/" />
 
+  <!-- Open Graph / Twitter (absolute URLs required) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Michael Laielli — Machine Learning Engineer" />
+  <meta property="og:description" content="Computer vision and video deep learning, from architecture to on-device deployment. Lead engineer on Drowsy Driver Alert; co-creator of the xView benchmark; UC Berkeley PhD in label-efficient computer vision." />
+  <meta property="og:url" content="https://laielli.github.io/" />
+  <meta property="og:image" content="https://laielli.github.io/og/default.png" />
+  <meta property="og:site_name" content="Michael Laielli" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Icons -->
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" />
+
+  <link rel="stylesheet" href="/assets/style.css" />
+</head>
+
+<body>
+  <div class="wrap">
+
+    <header class="masthead">
+      <a class="brand" href="https://laielli.github.io/">michael laielli</a>
+      <nav>
+        <a href="#work">Work</a>
+        <a href="#publications">Publications</a>
+        <a href="#writing">Writing</a>
+        <button class="toggle" id="theme-toggle" aria-label="Toggle dark mode">Theme</button>
+      </nav>
+    </header>
+
+    <main>
+
+      <section class="hero" style="margin-top:0">
+        <h1>Michael Laielli</h1>
+        <p class="role">Machine Learning Engineer · previously Staff Research Engineer, Netradyne</p>
+
+        <p class="thesis">
+          I build computer-vision and video systems that learn efficiently from people —
+          <span class="accent">human-in-the-loop</span>, label-efficient ML, from architecture through
+          on-device deployment.
+        </p>
+
+        <p class="summary">
+          At Netradyne (2021–2026) I led the deep-learning model R&amp;D behind
+          <a href="https://www.netradyne.com/blog/introducing-driveris-drowsy-driver-alert-feature">Drowsy Driver Alert</a>,
+          now running on several hundred thousand edge devices across 8+ countries, and later fine-tuned
+          vision-language models on driving video. My through-line is
+          getting the most signal from the least human-labeled data: earlier I proposed and co-created the
+          <a href="https://arxiv.org/abs/1802.07856">xView</a> satellite-imagery benchmark at the National
+          Geospatial-Intelligence Agency (540+ citations), and did a UC Berkeley PhD (BAIR) on
+          label-efficient computer vision and human-AI interaction.
+        </p>
+
+        <p class="linkbar">
+          <a href="mailto:mjlaielli@gmail.com" rel="me">Email</a><span class="sep">·</span>
+          <a href="https://www.linkedin.com/in/laielli" rel="me">LinkedIn</a>
+          <!-- GitHub link intentionally omitted until the profile is curated; re-add when ready. -->
+        </p>
+      </section>
+
+      <section id="focus">
+        <h2 class="eyebrow">Focus</h2>
+        <div class="focus-item">
+          <span class="term">Computer vision &amp; video.</span>
+          <span class="gloss">Temporal modeling, detection &amp; tracking, and edge / on-device deployment.</span>
+        </div>
+        <div class="focus-item">
+          <span class="term">Vision-language models.</span>
+          <span class="gloss">Curating training and eval data, fine-tuning VLMs and CLIP-family models, and measuring how they scale.</span>
+        </div>
+        <div class="focus-item">
+          <span class="term">Label-efficient &amp; human-in-the-loop ML.</span>
+          <span class="gloss">Active learning, knowledge distillation, and data engines that get more from limited supervision.</span>
+        </div>
+        <div class="focus-item">
+          <span class="term">Research to production.</span>
+          <span class="gloss">Taking models from R&amp;D to reliable systems running on hundreds of thousands of devices.</span>
+        </div>
+      </section>
+
+      <section id="work">
+        <h2 class="eyebrow">Selected work</h2>
+        <div class="entries">
+          <div class="entry">
+            <span class="title">
+              <a href="https://patents.google.com/patent/WO2024173817A1">Drowsy Driver Alert</a> — Netradyne
+            </span>
+            <span class="meta">2021 – 2026</span>
+            <span class="desc">Lead engineer. Drove precision 0.4 → 0.9 at fixed recall and distilled a ResNet50 teacher ensemble into an 8.9 MB ONNX MobileNetV2 + TSM edge model, running in real time under TensorRT on Jetson-class hardware — now on several hundred thousand devices across 8+ countries. Co-inventor on the pending patent.</span>
+            <span class="tags">computer-vision · video · edge · distillation</span>
+          </div>
+          <div class="entry">
+            <span class="title">
+              <a href="https://arxiv.org/abs/1802.07856">xView satellite-imagery benchmark</a> — NGA
+            </span>
+            <span class="meta">2018</span>
+            <span class="desc">Proposed and co-created a landmark large-scale overhead-imagery object-detection dataset and public benchmark (540+ citations), scoped through discovery interviews with dozens of imagery analysts.</span>
+            <span class="tags">computer-vision · datasets · remote-sensing</span>
+          </div>
+          <div class="entry">
+            <span class="title">
+              <a href="https://doi.org/10.1145/3332165.3347927">LabelAR</a> — UC Berkeley (UIST 2019)
+            </span>
+            <span class="meta">2019</span>
+            <span class="desc">Led an augmented-reality interface (HoloLens + ARKit) for fast computer-vision data collection — ~2.6× faster than post-hoc labeling at comparable accuracy. Owned the AR build, detector training, and user study.</span>
+            <span class="tags">computer-vision · hci · ar · label-efficient</span>
+          </div>
+          <div class="entry">
+            <span class="title">VLM scaling laws for driving video — Netradyne</span>
+            <span class="meta">2025</span>
+            <span class="desc">Fine-tuned Qwen2.5-VL on dual cabin- and road-facing driving video, curating the training and eval sets. Zero-shot performance scales log-linearly with training data: 5× precision on held-out tasks (0.03 → 0.15) from 3K to 30K examples. Labeling tooling built with LLM coding agents.</span>
+            <span class="tags">vlm · video · scaling-laws · data-curation</span>
+          </div>
+          <div class="entry">
+            <span class="title">Text-to-video retrieval — Netradyne</span>
+            <span class="meta">2025</span>
+            <span class="desc">Fine-tuned CLIP-family models (LongCLIP, SigLIP, Perception Encoder) for the internal video search the ML team used to build training and eval datasets: +10–20 points top-1 retrieval on hard, motion-based concepts.</span>
+            <span class="tags">vlm · retrieval · video · data-curation</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="publications">
+        <h2 class="eyebrow">Selected publications</h2>
+        <div class="entries">
+          <div class="entry">
+            <span class="title"><a href="https://arxiv.org/abs/1802.07856">xView: Objects in Context in Overhead Imagery</a></span>
+            <span class="meta">arXiv · 540+ cited</span>
+            <span class="desc">Large-scale satellite-imagery object-detection dataset and benchmark.</span>
+          </div>
+          <div class="entry">
+            <span class="title"><a href="https://doi.org/10.1145/3332165.3347927">LabelAR: A Spatial Guidance Interface for Fast CV Image Collection</a></span>
+            <span class="meta">UIST 2019 · Oral</span>
+            <span class="desc">AR system for rapid labeled-image collection; 2.6× faster than post-hoc labeling.</span>
+          </div>
+          <div class="entry">
+            <span class="title"><a href="https://arxiv.org/abs/2108.09186">Region-level Active Detector Learning</a></span>
+            <span class="meta">arXiv · 2021</span>
+            <span class="desc">Active selection of image regions; ~60% less labeling effort.</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="writing">
+        <h2 class="eyebrow">Writing</h2>
+        <div class="entries">
+          <div class="entry">
+            <span class="title"><a href="/education/softmax/">Softmax as probabilities relative to the largest logit</a></span>
+            <span class="meta">2026-03</span>
+            <span class="desc">A mental model for softmax numerical stability, with a shift-invariance proof.</span>
+          </div>
+          <div class="entry">
+            <span class="title"><a href="/education/coding/flashcards.html">Coding-patterns flashcards</a></span>
+            <span class="meta">2025-08</span>
+            <span class="desc">Interactive, YAML-driven flashcard app for algorithm patterns.</span>
+          </div>
+          <div class="entry">
+            <span class="title"><a href="/education/machine-learning/flashcards.html">ML-concepts flashcards</a></span>
+            <span class="meta">2025-08</span>
+            <span class="desc">Interactive, CSV-driven flashcard app for machine-learning concepts.</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="beyond" class="personal">
+        <h2 class="eyebrow">Beyond work</h2>
+        <p>
+          Cooking
+          (<a href="/recipes/chicken-parm/">chicken parm</a>,
+          <a href="/recipes/japanese-milk-bread/">milk bread</a>,
+          <a href="/recipes/sushi-rice/">sushi rice</a>),
+          travel (<a href="/travel/japan-2024/">Japan 2024</a>),
+          and surfing, climbing &amp; jiu-jitsu.
+        </p>
+      </section>
+
+    </main>
+
+    <footer>
+      <p class="linkbar">
+        <a href="mailto:mjlaielli@gmail.com" rel="me">Email</a><span class="sep">·</span>
+        <a href="https://www.linkedin.com/in/laielli" rel="me">LinkedIn</a>
+      </p>
+      <p>© Michael Laielli · built as plain HTML/CSS · <a href="https://latex.vercel.app">type</a></p>
+    </footer>
+
+  </div>
+
+  <script>
+    document.getElementById("theme-toggle").addEventListener("click", function () {
+      var cur = document.documentElement.getAttribute("data-theme");
+      var sysDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      var isDark = cur ? cur === "dark" : sysDark;
+      var next = isDark ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", next);
+      try { localStorage.setItem("theme", next); } catch (e) {}
+    });
+  </script>
 
 </body>
 </html>

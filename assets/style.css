@@ -1,0 +1,331 @@
+/* ==========================================================================
+   Michael Laielli — site stylesheet
+   Direction A: "Researcher's Notebook" (editorial / typographic)
+   Hand-written, buildless. All theming via CSS custom properties.
+   ========================================================================== */
+
+:root {
+  color-scheme: light dark;
+
+  /* Light palette — warm paper, ink, one oxblood accent */
+  --bg: #fbfaf7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --text-muted: #5c5a54;
+  --rule: #e6e3dc;
+  --accent: #9a1f2b;
+  --accent-strong: #7d1923;
+
+  /* Type */
+  --font-serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, monospace;
+
+  --measure: 42rem;          /* ~66ch reading measure */
+  --step--1: 0.84rem;        /* metadata / eyebrows */
+  --step-0: 1rem;            /* body (18px base) */
+  --step-1: 1.2rem;          /* lead / thesis */
+  --step-2: clamp(1.4rem, 1.1rem + 1.4vw, 1.7rem);  /* section heads */
+  --step-3: clamp(2rem, 1.4rem + 2.6vw, 2.7rem);    /* masthead name */
+}
+
+/* Dark palette — applied automatically by system preference … */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15161a;
+    --surface: #1c1d22;
+    --text: #e8e6e0;
+    --text-muted: #9a988f;
+    --rule: #2c2d33;
+    --accent: #e0848c;
+    --accent-strong: #ec9aa1;
+  }
+}
+/* … and by an explicit user toggle (this wins over the media query). */
+:root[data-theme="dark"] {
+  --bg: #15161a;
+  --surface: #1c1d22;
+  --text: #e8e6e0;
+  --text-muted: #9a988f;
+  --rule: #2c2d33;
+  --accent: #e0848c;
+  --accent-strong: #ec9aa1;
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-serif);
+  font-size: 18px;
+  line-height: 1.65;
+  font-optical-sizing: auto;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap {
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding: 0 1.25rem 4rem;
+}
+
+/* ---- Links --------------------------------------------------------------- */
+a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent) 50%, transparent);
+  text-underline-offset: 2px;
+  transition: color 0.12s ease, text-decoration-color 0.12s ease;
+}
+a:hover {
+  color: var(--accent-strong);
+  text-decoration-color: var(--accent);
+}
+.accent { color: var(--accent); }
+
+/* ---- Masthead ------------------------------------------------------------ */
+.masthead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 1.5rem 0 1rem;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 2.5rem;
+}
+.masthead .brand {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  font-weight: 500;
+  text-decoration: none;
+  letter-spacing: 0.01em;
+}
+.masthead nav {
+  font-family: var(--font-sans);
+  font-size: var(--step--1);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.masthead nav a {
+  text-decoration: none;
+  color: var(--text-muted);
+  margin-left: 1.1rem;
+}
+.masthead nav a:hover { color: var(--accent); }
+
+button.toggle {
+  font-family: var(--font-sans);
+  font-size: var(--step--1);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  padding: 0;
+  margin-left: 1.1rem;
+  cursor: pointer;
+}
+button.toggle:hover { color: var(--accent); }
+
+/* ---- Hero ---------------------------------------------------------------- */
+.hero h1 {
+  font-size: var(--step-3);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  font-weight: 600;
+  margin: 0 0 0.25rem;
+}
+.hero .role {
+  font-family: var(--font-sans);
+  font-size: var(--step--1);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin: 0 0 1.25rem;
+}
+.hero .thesis {
+  font-size: var(--step-1);
+  line-height: 1.45;
+  margin: 0 0 1.25rem;
+}
+.hero .summary {
+  color: var(--text);
+  margin: 0 0 1.5rem;
+}
+
+/* ---- Link bar + status --------------------------------------------------- */
+.linkbar {
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  margin: 0 0 0.5rem;
+}
+.linkbar a {
+  text-decoration: none;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.linkbar a:hover { color: var(--accent); }
+.linkbar .sep { color: var(--rule); margin: 0 0.4rem; }
+
+.status {
+  font-family: var(--font-sans);
+  font-size: var(--step--1);
+  color: var(--text-muted);
+  margin: 0;
+}
+.status .dot {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-right: 0.4rem;
+  vertical-align: middle;
+}
+
+/* ---- Sections ------------------------------------------------------------ */
+section { margin-top: 3rem; }
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: var(--step--1);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin: 0 0 1rem;
+  font-weight: 600;
+}
+
+/* Focus — definition-list rhythm, hairline separated */
+.focus-item {
+  padding: 0.85rem 0;
+  border-top: 1px solid var(--rule);
+}
+.focus-item:first-of-type { border-top: none; padding-top: 0; }
+.focus-item .term { font-weight: 600; }
+.focus-item .gloss { color: var(--text-muted); }
+
+/* Entry lists — selected work, writing */
+.entries { margin: 0; }
+.entry {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: 1rem;
+  align-items: baseline;
+  padding: 0.9rem 0;
+  border-top: 1px solid var(--rule);
+}
+.entry:first-of-type { border-top: none; }
+.entry .title { font-weight: 600; }
+.entry .title a { text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent); }
+.entry .meta {
+  font-family: var(--font-sans);
+  font-size: var(--step--1);
+  color: var(--text-muted);
+  text-align: right;
+  white-space: nowrap;
+}
+.entry .desc {
+  grid-column: 1 / -1;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-top: 0.15rem;
+}
+.entry .tags {
+  grid-column: 1 / -1;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+  margin-top: 0.35rem;
+}
+
+/* ---- Personal (de-emphasized) ------------------------------------------- */
+.personal { margin-top: 3.5rem; }
+.personal .eyebrow { color: var(--text-muted); }
+.personal p {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* ---- Footer -------------------------------------------------------------- */
+footer {
+  margin-top: 3.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--rule);
+  font-family: var(--font-sans);
+  font-size: var(--step--1);
+  color: var(--text-muted);
+}
+footer .linkbar { margin-bottom: 0.5rem; }
+footer a { color: var(--text-muted); text-decoration: none; }
+footer a:hover { color: var(--accent); }
+
+/* ---- CV / work page ------------------------------------------------------ */
+.cv .tagline {
+  font-family: var(--font-sans);
+  font-size: var(--step--1);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin: 0 0 1.25rem;
+}
+.cv .looking {
+  border-left: 2px solid var(--accent);
+  padding-left: 1rem;
+  margin: 0 0 1.5rem;
+}
+.cv-entry {
+  padding: 1rem 0;
+  border-top: 1px solid var(--rule);
+}
+.cv-entry:first-of-type { border-top: none; }
+.cv-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.cv-head .role { font-weight: 600; }
+.cv-head .meta {
+  font-family: var(--font-sans);
+  font-size: var(--step--1);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.cv ul { margin: 0.5rem 0 0; padding-left: 1.1rem; }
+.cv li { margin-bottom: 0.35rem; }
+.cv .pubs { list-style: none; padding-left: 0; }
+.cv .pubs li { margin-bottom: 0.6rem; }
+.cv .src {
+  font-family: var(--font-sans);
+  font-size: var(--step--1);
+  color: var(--text-muted);
+}
+.cv .kv { margin-bottom: 0.4rem; }
+.cv .kv .lbl { font-weight: 600; }
+strong, b, .k { font-weight: 600; }
+
+/* ---- Responsive ---------------------------------------------------------- */
+@media (max-width: 480px) {
+  .entry { grid-template-columns: 1fr; }
+  .entry .meta { text-align: left; margin-top: 0.1rem; }
+}
+
+/* ---- Print (recruiter can Save-as-PDF from /work) ------------------------ */
+@media print {
+  .masthead nav, button.toggle { display: none; }
+  body { background: #fff; color: #000; font-size: 11pt; line-height: 1.4; }
+  a { color: inherit; text-decoration: none; }
+  .wrap { max-width: none; padding: 0; }
+  .cv-entry, section { break-inside: avoid; }
+}

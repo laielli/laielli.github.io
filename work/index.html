@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Unlisted page: keep it out of search results. Not linked from the site, not in sitemap.xml. -->
+  <meta name="robots" content="noindex, nofollow" />
+
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("theme");
+        if (t === "dark" || t === "light")
+          document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    })();
+  </script>
+
+  <title>Michael Laielli — Résumé</title>
+  <meta name="description" content="Senior ML engineer — driving perception, data-driven development, VLM training and evals. Résumé and selected work." />
+
+  <!-- Open Graph (so the link previews nicely when shared in an application or email) -->
+  <meta property="og:type" content="profile" />
+  <meta property="og:title" content="Michael Laielli — Machine Learning Engineer" />
+  <meta property="og:description" content="Deep learning & computer vision, research to production. Lead engineer on Drowsy Driver Alert; co-creator of xView; UC Berkeley PhD in label-efficient computer vision." />
+  <meta property="og:url" content="https://laielli.github.io/work/" />
+  <meta property="og:image" content="https://laielli.github.io/og/default.png" />
+
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" />
+
+  <link rel="stylesheet" href="/assets/style.css" />
+</head>
+
+<body>
+  <div class="wrap">
+
+    <header class="masthead">
+      <a class="brand" href="https://laielli.github.io/">michael laielli</a>
+      <nav>
+        <a href="/">Home</a>
+        <button class="toggle" id="theme-toggle" aria-label="Toggle dark mode">Theme</button>
+      </nav>
+    </header>
+
+    <main class="cv">
+
+      <section class="hero" style="margin-top:0">
+        <h1>Michael Laielli</h1>
+        <p class="tagline">Senior ML Engineer · Driving Perception · Data-Driven Development · VLM Training &amp; Evals</p>
+
+        <p class="looking">
+          I'm exploring <strong>senior machine-learning engineering roles</strong> in computer vision,
+          video, and perception — on teams taking models from research into real products. Based in
+          San Diego; open to remote or hybrid.
+        </p>
+
+        <p class="linkbar">
+          <a href="mailto:mjlaielli@gmail.com" rel="me">mjlaielli@gmail.com</a><span class="sep">·</span>
+          <a href="https://www.linkedin.com/in/laielli" rel="me">linkedin.com/in/laielli</a>
+          <!-- GitHub link intentionally omitted until the profile is curated; re-add when ready. -->
+        </p>
+
+        <p class="summary">
+          Fifteen years in machine learning and computer vision, the last five taking camera-based driving
+          perception from research into large-scale production. Led a safety-critical driving model from a
+          stalled 40% against a 70% precision bar to <b>0.9 at fixed recall</b>, through General Availability
+          to <b>several hundred thousand vehicles in 8+ countries</b>, running in real time under TensorRT and
+          ONNX Runtime on Jetson-class hardware, mainly by making the data better while leading the labeling
+          team. Curated the training and eval data for a driving foundation VLM on dual inward/outward video,
+          establishing zero-shot scaling behavior (<b>5× on held-out tasks</b>) across tasks including red-light
+          and stop-sign violations; also rare traffic-sign recognition tooling and transformer-based tracking.
+          Berkeley (BAIR) Ph.D. work in label-efficient CV; <b>xView</b> (540+ citations); established a CRADA
+          with NVIDIA at NGA.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="eyebrow">Experience</h2>
+
+        <div class="cv-entry">
+          <div class="cv-head">
+            <span class="role">Staff Research Engineer · Netradyne</span>
+            <span class="meta">San Diego, CA · 2021 – 2026</span>
+          </div>
+          <ul>
+            <li><b>Data-driven development, leading the labeling team.</b> Owned the data engine for the
+              production <b>Drowsy Driver Alert</b> model, with the ML engineer and the labeling manager
+              reporting to me: <b>Max-Entropy active learning</b> over 6 rounds to prioritize collection and
+              labeling, QA-weighted labeling with an asymmetric error map, labeling instructions built on
+              objective visual cues, learned de-duplication, and failure-mode mining of rare hard cases
+              (occlusion, look-down, drinking). Then <b>knowledge distillation</b> stretched a 40K-clip
+              hand-labeled set across 60× more data via teacher pseudo-labels. Tracked in Weights &amp; Biases.</li>
+            <li><b>Productized for safety, latency, and robustness on embedded hardware.</b> Took the model
+              from research through GA (2023) to global rollout: a <b>MobileNetV2 + Temporal Shift Module</b>
+              student distilled from a 6-model ResNet50 teacher ensemble to <b>8.9 MB ONNX</b>, deployed under
+              TensorRT and ONNX Runtime on Jetson-class hardware in real time on <b>several hundred thousand
+              devices across 8+ countries</b>; <b>precision 0.4 → 0.9 at fixed recall</b>, clearing the 70% bar.
+              Co-inventor, pending patent
+              (<a href="https://patents.google.com/patent/WO2024173817A1">WO2024173817A1</a>).</li>
+            <li><b>Calibrated the precision/recall trade-off to the largest customer.</b> Hand-labeled ~800
+              videos to tie the model's drowsy score to lane-swerving events, giving Amazon an objective basis
+              for choosing its own alert threshold to match its review capacity, and authored the Progressive
+              Drowsy Scoring System to standardize that calibration.</li>
+            <li><b>VLM training and evals on dual inward/outward driving video.</b> Carefully curated the
+              training and evaluation datasets for a <b>Qwen2.5-VL</b> driving foundation model, spanning
+              road-facing tasks (red-light and stop-sign violations, lane position, intersections) and
+              cabin-facing tasks (drowsy, distracted), and used them to establish <b>log-linear scaling
+              behavior</b> for zero-shot driving tasks over data volume and mix. Scaling from 3K examples / 10
+              tasks to 30K / 40 tasks raised zero-shot precision <b>5× (0.03 → 0.15)</b> on held-out tasks
+              spanning intersections, traffic lights, distraction, and drowsiness, while lights-and-signs
+              precision rose <b>0.2 → 0.6</b>. Also fine-tuned LongCLIP, SigLIP, Perception Encoder for
+              driving-video retrieval (+10 to 20 pp top-1).</li>
+            <li><b>Traffic-sign recognition and tracking.</b> Built Visual Concept Search (active learning,
+              k-NN, language-image pretraining) to label rare traffic signs at <b>1000× lower cost</b> than
+              random sampling; led a two-person extension of the <b>Trackformer</b> transformer over more
+              frames, improving identity switching through occlusion.</li>
+          </ul>
+        </div>
+
+        <div class="cv-entry">
+          <div class="cv-head">
+            <span class="role">Research Scientist · National Geospatial-Intelligence Agency (NGA)</span>
+            <span class="meta">Springfield, VA · 2012 – 2018</span>
+          </div>
+          <ul>
+            <li>Proposed and co-created <b>xView</b>, a large-scale object-detection dataset and public
+              benchmark (<b>540+ citations</b>), holding the labeling contractor to the agreed accuracy bar and
+              date. Separately, established a <b>CRADA with NVIDIA</b>.</li>
+            <li>Co-proposed and co-managed (co-PM) a <b>multi-$10M</b> deep-learning image-analysis research
+              program, later folded into <b>Project Maven</b>.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="eyebrow">Selected publications</h2>
+        <ul class="pubs">
+          <li>
+            <b>xView: Objects in Context in Overhead Imagery</b>, large-scale object-detection dataset and
+            benchmark, 540+ citations. <span class="src"><a href="https://arxiv.org/abs/1802.07856">arXiv:1802.07856</a></span>
+          </li>
+          <li>
+            <b>LabelAR</b>, led an AR system (HoloLens and iPhone) for fast CV training-data collection: place
+            a 3D bounding volume once, auto-project 2D boxes across guided viewpoints; ~2.6× faster than
+            post-hoc labeling at comparable detector accuracy.
+            <span class="src"><a href="https://doi.org/10.1145/3332165.3347927">UIST 2019 (Oral)</a></span>
+          </li>
+          <li>
+            <b>Region-level Active Detector Learning</b>, active selection of image regions for labeling
+            detectors; ~60% less labeling effort. <span class="src"><a href="https://arxiv.org/abs/2108.09186">arXiv:2108.09186</a></span>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 class="eyebrow">Education</h2>
+        <div class="kv"><span class="lbl">Ph.D. Candidate (ABD), Computer Science (AI)</span> — UC Berkeley, EECS / BAIR · label-efficient computer vision, co-advised by Trevor Darrell &amp; Bjoern Hartmann · 2018–2021</div>
+        <div class="kv"><span class="lbl">M.S., Remote Sensing</span> — Naval Postgraduate School · 2012</div>
+        <div class="kv"><span class="lbl">B.S., Computational Science (Physics)</span> — Stockton University · 2010</div>
+      </section>
+
+      <section class="skills">
+        <h2 class="eyebrow">Skills</h2>
+        <div class="kv"><span class="lbl">Languages &amp; frameworks:</span> Python, PyTorch, SQL, MMAction2 · earlier: C, C++, OpenCV, MPI, MATLAB</div>
+        <div class="kv"><span class="lbl">Perception:</span> camera-based detection, recognition, and multi-object tracking, temporal video models · MobileNetV2, ResNet, Temporal Shift Module, transformers, VLMs (Qwen2.5-VL, CLIP family)</div>
+        <div class="kv"><span class="lbl">Data-driven development:</span> active learning and collection prioritization, labeling-efficiency and QA-weighted labeling, failure-mode and hard-negative mining, dataset curation and de-duplication</div>
+        <div class="kv"><span class="lbl">Embedded &amp; production:</span> knowledge distillation, model compression, TensorRT / ONNX Runtime on Jetson-class hardware, real-time inference · W&amp;B, AWS EC2 and SageMaker</div>
+      </section>
+
+    </main>
+
+    <footer>
+      <p class="linkbar">
+        <a href="mailto:mjlaielli@gmail.com" rel="me">Email</a><span class="sep">·</span>
+        <a href="https://www.linkedin.com/in/laielli" rel="me">LinkedIn</a>
+      </p>
+      <p>© Michael Laielli · résumé · <a href="/">laielli.github.io</a></p>
+    </footer>
+
+  </div>
+
+  <script>
+    document.getElementById("theme-toggle").addEventListener("click", function () {
+      var cur = document.documentElement.getAttribute("data-theme");
+      var sysDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      var isDark = cur ? cur === "dark" : sysDark;
+      var next = isDark ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", next);
+      try { localStorage.setItem("theme", next); } catch (e) {}
+    });
+  </script>
+
+</body>
+</html>
