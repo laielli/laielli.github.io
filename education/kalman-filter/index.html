@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>An intro to Kalman filters — Michael Laielli</title>
+  <meta name="description" content="A constant-velocity Kalman filter in about 40 lines of NumPy, built up from one intuitive paragraph: every phrase mapped to its equation and its line of code." />
+  <link rel="canonical" href="https://laielli.github.io/education/kalman-filter/" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="An intro to Kalman filters" />
+  <meta property="og:description" content="A constant-velocity Kalman filter in about 40 lines of NumPy, with every phrase of the intuition mapped to an equation and a line of code." />
+  <meta property="og:url" content="https://laielli.github.io/education/kalman-filter/" />
+  <meta property="og:image" content="https://laielli.github.io/og/default.png" />
+  <meta property="og:site_name" content="Michael Laielli" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+  <link rel="stylesheet" href="https://latex.now.sh/style.css">
+</head>
+<body>
+
+<h1><a href="https://laielli.github.io/">michael laielli</a></h1>
+
+<h2>An intro to Kalman filters</h2>
+<hr>
+
+<p>Here is the whole idea of a Kalman filter in one paragraph:</p>
+
+<blockquote>
+<p>A Kalman filter repeats two steps forever. First, <b>predict</b>: take your last estimate of where something was and how it was moving, along with how sure you were of it, and roll it forward to now, growing less sure as you go. Then <b>correct</b>: compare that prediction with a noisy new measurement and blend the two, trusting whichever is less uncertain. Out comes a new estimate of where it is now, and how sure you are of it.</p>
+</blockquote>
+
+<p>That's it. Everything else is making each phrase precise. This post does exactly that: below is a complete constant-velocity Kalman filter for one object moving in 2D, in about 40 lines of NumPy, and each section takes one phrase of that paragraph and shows the equation and the line of code that implement it. At the end, a single table lines all three up.</p>
+
+<pre><code>import numpy as np
+
+H = np.array([[1., 0, 0, 0],
+              [0., 1, 0, 0]])
+
+class Track:
+    def __init__(self, z, t, pos_sd=1.0, vel_sd=5.0, accel_sd=0.5):
+        self.x = np.array([z[0], z[1], 0.0, 0.0])     # where it was, how it was moving
+        self.P = np.diag([pos_sd**2, pos_sd**2, vel_sd**2, vel_sd**2])  # how sure
+        self.t = t
+        self.q = accel_sd**2
+
+    def predict(self, t):
+        dt = t - self.t
+        if dt &lt; 0:
+            raise ValueError("out-of-order measurement: buffer or reject")
+        F = np.eye(4); F[0, 2] = F[1, 3] = dt
+        G = np.array([[dt**2 / 2, 0], [0, dt**2 / 2], [dt, 0], [0, dt]])
+        Q = self.q * G @ G.T
+        self.x = F @ self.x                           # roll it forward to now
+        self.P = F @ self.P @ F.T + Q                 # growing less sure as you go
+        self.t = t
+
+    def innovation(self, z, R):
+        r = z - H @ self.x                            # compare prediction with measurement
+        S = H @ self.P @ H.T + R
+        d2 = r @ np.linalg.solve(S, r)
+        return r, S, d2
+
+    def update(self, z, R, gate=9.21):
+        r, S, d2 = self.innovation(z, R)
+        if d2 &gt; gate:
+            return False
+        K = self.P @ H.T @ np.linalg.inv(S)           # trust whichever is less uncertain
+        self.x = self.x + K @ r                       # blend the two: new estimate
+        I_KH = np.eye(4) - K @ H
+        self.P = I_KH @ self.P @ I_KH.T + K @ R @ K.T # how sure you are now
+        return True</code></pre>
+
+<p>One bit of notation first, because it's exactly what the paragraph's "last", "prediction" and "now" are tracking. Measurements arrive at times $k = 1, 2, 3, \dots$ Each estimate gets a superscript for <i>which moment</i> it describes:</p>
+
+<ul>
+  <li>$x^+_{k-1}$: the estimate right after the last correction. "Your last estimate."</li>
+  <li>$x^-_k$: that estimate rolled forward to the new measurement's time, before looking at the measurement. "That prediction."</li>
+  <li>$x^+_k$: after blending in the measurement. "A new estimate of where it is now."</li>
+</ul>
+
+<p>The covariance $P$ gets the same marks. The code has only one <code>self.x</code> and one <code>self.P</code>, and they move through these three moments in turn: <code>predict</code> turns a $+$ into a $-$, and <code>update</code> turns the $-$ back into a $+$. Then the new estimate becomes the next step's "last estimate", and the loop repeats forever.</p>
+
+<p>Let's go phrase by phrase.</p>
+
+<h3>"Where something was and how it was moving"</h3>
+
+<pre><code>self.x = np.array([z[0], z[1], 0.0, 0.0])</code></pre>
+
+<p>The state $x$ is everything we want to know about the object, packed into one vector. "Where it was" is position, and "how it was moving" is velocity:</p>
+
+$$
+x = \begin{bmatrix} p_x & p_y & v_x & v_y \end{bmatrix}^T
+$$
+
+<p>Position in metres, velocity in metres per second, all in one fixed world frame. The order matters only in that every matrix below has to agree with it. A surprising number of tracker bugs are a matrix written for <code>[px, vx, py, vy]</code> multiplying a state stored as <code>[px, py, vx, vy]</code>.</p>
+
+<p>The "how it was moving" half is the important one. It's what makes "roll it forward to now" possible. And notice that our sensor never measures it: it only gives position $z = [p_x, p_y]$. The filter has to <i>infer</i> velocity from how positions change over time. This gap between what you measure and what you want to know is the reason the filter exists. If you could measure the full state perfectly, you wouldn't need one.</p>
+
+<p>The very first "last estimate" has to come from somewhere, so we start the track from the first measurement: position is the measured position, and velocity is zero. Zero isn't a belief that the object is stationary. It's a placeholder, and the next phrase says how little we trust it.</p>
+
+<h3>"How sure you were of it"</h3>
+
+<pre><code>self.P = np.diag([pos_sd**2, pos_sd**2, vel_sd**2, vel_sd**2])</code></pre>
+
+<p>A Kalman filter never carries just a guess. It carries a guess and a covariance $P$ that says how wrong the guess might be. "How sure" is $P$, and it shows up in the paragraph three times: how sure you were, growing less sure, and how sure you are now. The diagonal holds variances (standard deviation squared, a classic place to drop a square). The off-diagonals hold how errors in different components move together.</p>
+
+<p>Here we're fairly sure of position (1 m, about the sensor noise) and very unsure of velocity (5 m/s). That large velocity variance is what lets the first few measurements set the velocity quickly. If you initialized velocity to zero with a <i>small</i> variance, the filter would believe its own made-up number and ignore the data for a long time.</p>
+
+<p>It starts diagonal, meaning no correlation between position and velocity errors. That changes after the very first predict, and it turns out to be the most important thing in the whole filter.</p>
+
+<h3>"Roll it forward to now"</h3>
+
+<pre><code>F = np.eye(4); F[0, 2] = F[1, 3] = dt
+self.x = F @ self.x</code></pre>
+
+<p>"Now" is the time of the new measurement, and "roll forward" means: assume constant velocity, so position moves by velocity times elapsed time and velocity stays put. That's all $F$ says:</p>
+
+$$
+x^-_k = F\,x^+_{k-1},
+\qquad
+F(\Delta t)=
+\begin{bmatrix}
+1&0&\Delta t&0\\
+0&1&0&\Delta t\\
+0&0&1&0\\
+0&0&0&1
+\end{bmatrix}
+$$
+
+<p>The first row reads $p_x \leftarrow p_x + \Delta t \, v_x$. Note that <code>dt</code> is computed from timestamps, not assumed. Sensors drop frames and arrive irregularly, and a filter with a hard-coded <code>dt = 0.1</code> silently goes wrong the moment they do.</p>
+
+<pre><code>if dt &lt; 0:
+    raise ValueError("out-of-order measurement: buffer or reject")</code></pre>
+
+<p>"Forward" is literal. If a measurement shows up older than the current state (common with sensors that have processing latency), you need a policy: buffer and re-order, re-run the filter from that time, or drop it. Predicting backwards by accident is a silent bug, so make it a loud one.</p>
+
+<h3>"Growing less sure as you go"</h3>
+
+<pre><code>G = np.array([[dt**2 / 2, 0], [0, dt**2 / 2], [dt, 0], [0, dt]])
+Q = self.q * G @ G.T
+self.P = F @ self.P @ F.T + Q</code></pre>
+
+$$
+P^-_k = F\,P^+_{k-1}\,F^T + Q
+$$
+
+<p>The uncertainty rolls forward too, and it gets worse in two ways. $FPF^T$ carries the existing uncertainty through the motion: if we're unsure of velocity, we become unsure of position, more so the longer we wait. This term also creates the position–velocity correlation in the off-diagonals. After a predict, the filter "knows" that if position turns out further along than expected, velocity was probably higher than expected. Hold on to that; it's how velocity gets learned.</p>
+
+<p>The second term, $Q$, is the honest admission that the object doesn't really move at constant velocity. Imagine a random, unknown acceleration $a$ with variance $q$ acting over the interval. It shifts position by $\tfrac{1}{2} a \Delta t^2$ and velocity by $a \Delta t$. The columns of $G$ are exactly those two effects, one column per axis, so $Q = G\,q\,G^T$ is the covariance of where that random push could have sent us. Since it depends on $\Delta t$, "as you go" is literal too: a long gap adds a lot of doubt and a short one adds a little.</p>
+
+<p><code>accel_sd</code> is the main tuning knob of the filter. Too small and the filter is stubborn: it lags behind a turning object and can end up rejecting the true measurements. Too large and it's twitchy: the velocity estimate chases every bit of noise. You'll see the twitchy version in the run below.</p>
+
+<h3>"A noisy new measurement"</h3>
+
+<p>Two things describe the measurement: its value $z_k$, and how noisy it is, the covariance $R$. Here $R = I \cdot (1\text{ m})^2$: each position fix is off by about a metre. (Variances again, not standard deviations.) $R$ is passed into <code>update</code> with each measurement, so different sensors, or the same sensor on a bad day, can say how noisy they are.</p>
+
+<p>The paragraph says "of where it is" for a reason, too: the sensor sees only part of the state. $H$ is the matrix that picks out that part, "what the sensor would see if our state were true":</p>
+
+$$
+H=
+\begin{bmatrix}
+1&0&0&0\\
+0&1&0&0
+\end{bmatrix}
+$$
+
+<p>It reads off position and ignores velocity.</p>
+
+<h3>"Compare that prediction with the measurement"</h3>
+
+<pre><code>r = z - H @ self.x
+S = H @ self.P @ H.T + R</code></pre>
+
+$$
+r_k = z_k - H\,x^-_k,
+\qquad
+S_k = H\,P^-_k\,H^T + R
+$$
+
+<p>The comparison is a subtraction. The innovation $r$ is the surprise: what we measured minus what we predicted we'd measure. If the filter is doing well, innovations look like small, zero-mean noise.</p>
+
+<p>$S$ is how big we expected the surprise to be. It has two sources: our own doubt in the predicted position ($HP^-H^T$, the position block of $P^-$) plus the sensor's noise $R$. A big innovation is only alarming relative to $S$.</p>
+
+<pre><code>d2 = r @ np.linalg.solve(S, r)</code></pre>
+
+<p>Which is exactly what this measures. $d^2 = r^T S^{-1} r$ is the squared Mahalanobis distance: the surprise measured in units of expected surprise. Being 3 m off when we expected ±0.5 m is a much bigger deal than 3 m off when we expected ±5 m, and $d^2$ captures that in one number. (<code>solve</code> instead of <code>inv</code> is just the numerically nicer way to compute $S^{-1}r$.)</p>
+
+<h3>The fine print: the gate</h3>
+
+<pre><code>if d2 &gt; gate:
+    return False</code></pre>
+
+<p>The paragraph quietly assumes every measurement is real. In practice some aren't. If the filter's model is right, $d^2$ for a 2D measurement follows a chi-square distribution with 2 degrees of freedom. That gives a principled threshold: 99% of genuine measurements have $d^2 &lt; 9.21$ (95% have $d^2 &lt; 5.99$). Anything beyond the gate is far more likely to be a glitch, a reflection, or a different object than our target, so we refuse to blend it in. The prediction stands as the new estimate, and the caller counts it as a miss.</p>
+
+<p>Without this, one bad measurement yanks an established track off course. With it, the track ignores the outlier and keeps going.</p>
+
+<h3>"Trusting whichever is less uncertain"</h3>
+
+<pre><code>K = self.P @ H.T @ np.linalg.inv(S)</code></pre>
+
+$$
+K_k = P^-_k\,H^T S_k^{-1}
+$$
+
+<p>This is the heart of it. The Kalman gain $K$ is "how much to trust the measurement", computed from the two uncertainties. It's easiest to see in one dimension, where it collapses to:</p>
+
+$$
+K = \frac{\sigma^2_{\text{pred}}}{\sigma^2_{\text{pred}} + \sigma^2_{\text{meas}}}
+$$
+
+<p>If the prediction is very uncertain ($\sigma^2_{\text{pred}}$ large), $K \to 1$: trust the measurement. If the sensor is very noisy ($\sigma^2_{\text{meas}}$ large), $K \to 0$: trust the prediction. In between, each side is weighted by how unsure the <i>other</i> side is. That's the phrase, exactly.</p>
+
+<p>In the matrix version, $K$ is $4\times 2$: it maps a 2D position surprise into a correction for all four state components. And here's where the off-diagonals of $P$ pay off. Because predict made position and velocity errors correlated, $PH^T$ has non-zero velocity rows, so a position surprise also corrects velocity. Measured further ahead than expected? Then you were probably faster than you thought. That's how a filter that only ever sees positions learns "how it was moving".</p>
+
+<h3>"Blend the two" into "a new estimate of where it is now"</h3>
+
+<pre><code>self.x = self.x + K @ r</code></pre>
+
+$$
+x^+_k = x^-_k + K_k\,r_k
+$$
+
+<p>Start from the prediction and move a fraction $K$ of the way toward the measurement. In one dimension this is literally a weighted average, $x^+ = (1-K)\,x^- + K\,z$. That's all a Kalman filter is: a running weighted average with the weights computed for you.</p>
+
+<h3>"And how sure you are of it"</h3>
+
+<pre><code>I_KH = np.eye(4) - K @ H
+self.P = I_KH @ self.P @ I_KH.T + K @ R @ K.T</code></pre>
+
+$$
+P^+_k = (I - K_k H)\,P^-_k
+$$
+
+<p>Blending in information always makes you more sure, so $P$ shrinks. In one dimension, $\sigma^2_{\text{new}} = (1-K)\,\sigma^2_{\text{pred}}$, which is smaller than either input variance. The code uses the "Joseph form", which is algebraically the same as the equation above but stays symmetric and positive-definite under floating-point round-off. Same math, fewer mysterious failures after a million updates.</p>
+
+<p>And that closes the loop: $x^+_k$ and $P^+_k$ become the next step's "last estimate" and "how sure you were".</p>
+
+<h3>Run it</h3>
+
+<p>To try it, simulate an object moving at a constant $(2, 1)$ m/s, measured with 1 m noise at irregular intervals of 0.3–0.7 s. Delete the measurements between 8 s and 11 s to make a gap, and push one measurement 30 m off to make an outlier:</p>
+
+<pre><code>rng = np.random.default_rng(0)
+v_true = np.array([2.0, 1.0])
+times = np.cumsum(rng.uniform(0.3, 0.7, size=40))
+times = times[(times &lt; 8) | (times &gt; 11)]
+R = np.eye(2) * 1.0**2
+
+trk = None
+for i, t in enumerate(times):
+    z = v_true * t + rng.normal(0, 1.0, size=2)
+    if i == 25:
+        z = z + np.array([30.0, -30.0])
+    if trk is None:
+        trk = Track(z, t)
+        continue
+    trk.predict(t)
+    sd_before = np.sqrt(trk.P[0, 0])
+    ok = trk.update(z, R)
+    sd_after = np.sqrt(trk.P[0, 0])
+    print(f"t={t:5.2f}  v=({trk.x[2]:+.2f}, {trk.x[3]:+.2f})  "
+          f"pos_sd {sd_before:.2f} -> {sd_after:.2f}  {'ok' if ok else 'REJECTED'}")</code></pre>
+
+<p>Each line prints the paragraph's quantities: <code>v</code> is "how it was moving" from the new estimate $x^+_k$; the first <code>pos_sd</code> is the position standard deviation after "growing less sure" (from $P^-_k$), and the second is "how sure you are" after correcting (from $P^+_k$). Here's the output (trimmed):</p>
+
+<pre><code>t= 0.96  v=(+5.67, -0.54)  pos_sd 2.27 -> 0.92  ok
+t= 1.28  v=(+3.74, -1.29)  pos_sd 1.64 -> 0.85  ok
+t= 1.59  v=(+3.90, +0.91)  pos_sd 1.32 -> 0.80  ok
+t= 2.21  v=(+3.47, +1.15)  pos_sd 1.51 -> 0.83  ok
+t= 2.88  v=(+2.45, +0.20)  pos_sd 1.33 -> 0.80  ok
+t= 3.42  v=(+2.00, +0.59)  pos_sd 1.09 -> 0.74  ok
+...
+t= 7.68  v=(+2.32, +0.67)  pos_sd 0.82 -> 0.64  ok
+t=11.33  v=(+1.50, +1.80)  pos_sd 4.02 -> 0.97  ok
+t=11.89  v=(+1.83, +1.33)  pos_sd 1.26 -> 0.78  ok
+...
+t=16.44  v=(+1.79, +1.44)  pos_sd 0.84 -> 0.64  ok
+t=16.80  v=(+1.79, +1.44)  pos_sd 0.77 -> 0.77  REJECTED
+t=17.39  v=(+1.86, +0.91)  pos_sd 1.02 -> 0.71  ok
+...
+t=20.59  v=(+2.28, +0.57)  pos_sd 0.84 -> 0.64  ok</code></pre>
+
+<p>Every phrase shows up:</p>
+
+<ul>
+  <li><b>"How it was moving" is learned, never measured.</b> The first velocity, $(5.67, -0.54)$, is junk. It comes from two noisy points 0.4 s apart, and 1 m of noise over 0.4 s is several m/s of velocity noise. Within a few seconds it settles near the true $(2, 1)$.</li>
+  <li><b>"Growing less sure", then "how sure you are".</b> Every row, <code>pos_sd</code> grows during predict and shrinks on correction. It levels off around 0.64 m after correction, below the 1 m sensor noise, because the filter is blending many measurements through the motion model.</li>
+  <li><b>"As you go" scales with time.</b> After the 3.65 s gap the predicted standard deviation is 4.02 m. There was no fake measurement and no zeros, just a long roll-forward with growing doubt. Now the prediction is the uncertain side, so "trusting whichever is less uncertain" means a big gain, and one measurement pulls the doubt back to 0.97 m.</li>
+  <li><b>The gate's fine print.</b> At 16.80 s the 30 m jump is rejected. Velocity is unchanged and <code>pos_sd</code> stays at its predicted value, because nothing was blended in.</li>
+  <li><b>How much doubt "as you go" adds is a choice.</b> The velocity keeps wandering by about half a metre per second even late in the run. That's the twitchy filter: <code>accel_sd=0.5</code> says the object might be accelerating, so predictions are doubted more and measurements trusted more, noise included. This simulated object really is constant, so with <code>accel_sd=0.05</code> the final velocity is $(1.97, 0.97)$ and <code>pos_sd</code> drops to about 0.42 m. A real boat or car turns, though, and that small value would lag every turn. Picking $Q$ is a statement about how your object actually moves.</li>
+</ul>
+
+<h3>The paragraph, the equations, and the code</h3>
+
+<p>Here is the opening paragraph one last time, with every phrase lined up against its equation and its code. Read down the first column and you get the intuition; read down the second and you get the textbook Kalman filter; read down the third and you get the program.</p>
+
+<table>
+  <thead><tr><th>Phrase</th><th>Equation</th><th>Code</th></tr></thead>
+  <tbody>
+    <tr><td>"your last estimate of where something was and how it was moving"</td><td>$x^+_{k-1}$</td><td><code>self.x</code> before <code>predict</code></td></tr>
+    <tr><td>"how sure you were of it"</td><td>$P^+_{k-1}$</td><td><code>self.P</code> before <code>predict</code></td></tr>
+    <tr><td>"roll it forward to now"</td><td>$x^-_k = F x^+_{k-1}$</td><td><code>self.x = F @ self.x</code></td></tr>
+    <tr><td>"growing less sure as you go"</td><td>$P^-_k = F P^+_{k-1} F^T + Q$</td><td><code>self.P = F @ self.P @ F.T + Q</code></td></tr>
+    <tr><td>"a noisy new measurement"</td><td>$z_k$, with noise $R$</td><td><code>z</code>, <code>R</code></td></tr>
+    <tr><td>"of where it is" (what the sensor sees)</td><td>$H x$</td><td><code>H @ self.x</code></td></tr>
+    <tr><td>"compare that prediction with" the measurement</td><td>$r_k = z_k - H x^-_k$, &nbsp;$S_k = H P^-_k H^T + R$</td><td><code>r</code>, <code>S</code> in <code>innovation</code></td></tr>
+    <tr><td>(fine print) ignore a measurement too surprising to be real</td><td>$r_k^T S_k^{-1} r_k &gt; \chi^2_{2,\,0.99} = 9.21$</td><td><code>if d2 &gt; gate</code></td></tr>
+    <tr><td>"trusting whichever is less uncertain"</td><td>$K_k = P^-_k H^T S_k^{-1}$</td><td><code>K = self.P @ H.T @ np.linalg.inv(S)</code></td></tr>
+    <tr><td>"blend the two" into "a new estimate of where it is now"</td><td>$x^+_k = x^-_k + K_k r_k$</td><td><code>self.x = self.x + K @ r</code></td></tr>
+    <tr><td>"and how sure you are of it"</td><td>$P^+_k = (I - K_k H) P^-_k$</td><td><code>self.P = I_KH @ self.P @ I_KH.T + K @ R @ K.T</code></td></tr>
+    <tr><td>"repeats two steps forever"</td><td>$k \leftarrow k+1$</td><td>the <code>for</code> loop: <code>predict</code>, then <code>update</code></td></tr>
+  </tbody>
+</table>
+
+<h3>Real stuff</h3>
+
+<p>The paragraph is the same for every Kalman filter. What changes in real systems is what each phrase has to contend with:</p>
+
+<p><b>"A noisy new measurement" is rarely a clean position.</b> Our toy sensor hands over 2D positions. Real ones don't:</p>
+
+<table>
+  <thead><tr><th>Sensor</th><th>Gives you</th><th>Doesn't give you</th></tr></thead>
+  <tbody>
+    <tr><td>Camera</td><td>Bearing (direction), appearance, class</td><td>Distance from a bounding box alone. Range needs a known object size, geometry, motion over time, or another sensor.</td></tr>
+    <tr><td>Radar</td><td>Range and bearing; sometimes range rate (Doppler)</td><td>Full velocity. Doppler only sees the component of motion toward or away from you.</td></tr>
+    <tr><td>LiDAR</td><td>Range and 3D shape, at short range</td><td>Objects. Raw points must be clustered first.</td></tr>
+    <tr><td>IMU</td><td>Your own rotation rate and acceleration</td><td>Anything about other objects, or drift-free position.</td></tr>
+    <tr><td>GPS</td><td>Your own position and velocity</td><td>Certainty. Its error leaks into every object you place on the map.</td></tr>
+  </tbody>
+</table>
+
+<p><b>"Of where it is" can be nonlinear.</b> Radar measures range $\sqrt{\Delta x^2+\Delta y^2}$ and bearing $\operatorname{atan2}(\Delta y, \Delta x)$, which aren't linear in the state, so a single matrix $H$ can't describe them. The extended Kalman filter (EKF) swaps $H$ for the Jacobian of the measurement function at the current prediction. Every other phrase is unchanged. (Remember to wrap bearing innovations into $[-\pi, \pi]$.)</p>
+
+<p><b>"Where" depends on a frame.</b> We assumed one fixed world frame. A sensor on a moving vehicle measures relative to itself, so each measurement has to be moved into the world frame using the vehicle's pose: $p_{\text{world}} = R(\psi)\,p_{\text{vehicle}} + t$. Get that wrong and a stationary buoy appears to swing around every time your boat turns.</p>
+
+<p><b>"Now" means capture time.</b> The pose and the roll-forward must use the moment the measurement was <i>captured</i>, not when it arrived. At a 10°/s turn, a 50 ms timestamp error is a 0.5° bearing error, which is about 1.7 m sideways at 200 m range. With several sensors at different rates, you process each measurement in capture-time order, each with its own $H$ and $R$. You don't pair up "latest readings".</p>
+
+<p><b>"Something" is usually many things.</b> The paragraph assumes you know which measurement belongs to which object. Deciding that is a separate problem called data association. The usual loop is: roll every track forward, compute $d^2$ between every track and every detection, gate, assign one-to-one (for example with <code>scipy.optimize.linear_sum_assignment</code>), correct the matched tracks, coast the unmatched ones, and start tentative tracks from leftover detections. The <code>innovation</code> method above, which does the "compare" step without blending, is the piece that plugs into that loop.</p>
+
+<h3>FAQ</h3>
+
+<p><b>What if no measurement arrives?</b> Then you do the first half of the paragraph and skip the second: roll forward, grow less sure, done. The state coasts on the motion model and $P$ grows, which also widens the gate so the object can be picked up again. Never fill the gap with zeros or a repeated last value. If a track goes too long without a correction, delete it.</p>
+
+<p><b>What does a bigger $R$ do?</b> The measurement becomes the more uncertain side, so "trusting whichever is less uncertain" leans on the prediction: $S$ grows, $K$ shrinks, and each measurement moves the estimate less. You get a smoother estimate that reacts more slowly.</p>
+
+<p><b>How do I know if $Q$ and $R$ are right?</b> Watch the comparisons. If the filter's "how sure" is honest, $d^2$ averages about the measurement dimension (2 here). Consistently bigger means the filter is overconfident, so raise $Q$ or $R$. Consistently smaller means it's too cautious.</p>
+
+<p><b>Isn't this just an exponential moving average?</b> "Blend the two" with a fixed weight <i>is</i> an EMA, and for a single state with fixed noise the gain settles to a constant, so it nearly is one. The Kalman filter earns its keep when the weight shouldn't be fixed, or when you need something an EMA doesn't give you: velocity you never measured, prediction through gaps, irregular timing, uncertainty you can gate on, and a principled way to combine sensors with different noise. If you only need to smooth a number on a display, an EMA is fine.</p>
+
+<p><b>Do I need an EKF to fuse two sensors?</b> No. Two sensors just means two kinds of "noisy new measurement", each with its own $H$ and $R$, correcting the same state. You need an EKF (or an unscented filter) when "of where it is" is a nonlinear function of the state, like range and bearing.</p>
+
+<p><b>Further reading.</b> Stone Soup's <a href="https://stonesoup.readthedocs.io/en/latest/auto_tutorials/01_KalmanFilterTutorial.html">Kalman filter tutorial</a> and <a href="https://stonesoup.readthedocs.io/en/latest/auto_tutorials/06_DataAssociation-MultiTargetTutorial.html">data association tutorial</a>, and <a href="https://filterpy.readthedocs.io/en/latest/kalman/KalmanFilter.html">FilterPy's KalmanFilter docs</a>.</p>
+
+<h3>Appendix: the variables</h3>
+
+<p>The conventional names you'll see in papers and libraries, next to what each one means in plain terms.</p>
+
+<table>
+  <thead><tr><th>Symbol</th><th>Name</th><th>Meaning</th></tr></thead>
+  <tbody>
+    <tr><td>$x$</td><td>State vector</td><td>Everything you want to know about the object: here, where it is and how it's moving</td></tr>
+    <tr><td>$P$</td><td>State covariance</td><td>How sure you are of $x$, and how errors in its parts move together</td></tr>
+    <tr><td>$x^-_k$, $P^-_k$</td><td>Prior, or predicted estimate</td><td>Your best guess at time $k$ before looking at the new measurement</td></tr>
+    <tr><td>$x^+_k$, $P^+_k$</td><td>Posterior, or updated estimate</td><td>Your best guess at time $k$ after blending in the measurement</td></tr>
+    <tr><td>$F$</td><td>State transition matrix</td><td>How the state moves on its own over $\Delta t$: here, position advances by velocity times time</td></tr>
+    <tr><td>$Q$</td><td>Process noise covariance</td><td>How much the object might stray from the motion model per step: the doubt added "as you go"</td></tr>
+    <tr><td>$z$</td><td>Measurement</td><td>What the sensor reported</td></tr>
+    <tr><td>$H$</td><td>Measurement (observation) matrix</td><td>What the sensor would report if the state were exactly right</td></tr>
+    <tr><td>$R$</td><td>Measurement noise covariance</td><td>How noisy the sensor is</td></tr>
+    <tr><td>$r$</td><td>Innovation, or residual</td><td>The surprise: measured minus predicted measurement</td></tr>
+    <tr><td>$S$</td><td>Innovation covariance</td><td>How big you expected the surprise to be</td></tr>
+    <tr><td>$d^2$</td><td>Squared Mahalanobis distance, or normalized innovation squared</td><td>The surprise in units of expected surprise; what the gate checks</td></tr>
+    <tr><td>$K$</td><td>Kalman gain</td><td>How much of the surprise to believe: near 1 trusts the measurement, near 0 trusts the prediction</td></tr>
+  </tbody>
+</table>
+
+<p><a href="/">← Home</a></p>
+
+<hr>
+<br>
+<button id="dark-mode-toggle">Toggle dark mode</button>
+<script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'],],
+      },
+    }
+    const darkModeToggle = document.querySelector("#dark-mode-toggle")
+    .addEventListener('click', () => {
+     document.body.classList.toggle("latex-dark")
+    })
+  ;
+  </script>
+
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</body>
+</html>
